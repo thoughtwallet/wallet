@@ -1,0 +1,182 @@
+/*
+  generic interface for statetools based app
+*/
+body {
+  margin:0; padding:0;
+  font-family:"Arial", sans-serif; 
+  color:#404040;
+  -webkit-font-smoothing:antialiased;
+}
+.inlinewidget {
+  display:inline-block;
+}
+.btnmain, .main {
+  font-size:110%;
+}
+.btnbig, .big {
+  font-size:105%;
+}
+.btnsm, .btndosm {
+  font-size:70%;
+}
+.btn, .btnbig, .btnsm, .btnn, .btnmain, 
+.btnclk, .btnplain, .btntext, .btndo, .btndosm,
+.popbox, .popboxleft, .popclk, .popclkleft, .popclktop {
+  display:inline-block; margin:0; border:1px; border-style:solid;
+  color:gray; border-color:gray; background-color:#f3f0b0;
+  border-radius:1px;
+}
+.btnbig, .btnsm, .btn, .btnn, .btnmain, 
+.btnclk, .btnplain, .btntext, .btndo, .btndosm {
+  border-color:#b8b8b8; cursor:pointer; white-space:nowrap;
+  background-color:#f0f0f0; color:#707070;
+}
+.btnplain, .btntext {
+  background-color:transparent;
+}
+.btndo, .btndosm {
+  background-color:#f3f3f3; border-radius:3px;
+}
+.btndo:disabled, .btndosm:disabled, .btnsm:disabled, .btn:disabled {
+  color:#d0d0d0;
+}
+.btntext {
+  text-decoration:underline; border:0; padding:0;
+}
+.popbox, .popboxleft, .popclk, .popclktop, .popclkleft {
+  border-style:dotted;
+  width:auto; position:absolute; padding:0.7em 0.7em; visibility:hidden;
+}
+.popboxleft, .popclkleft {
+  right:0;
+}
+.popboxtop, .popclktop {
+  bottom:0;
+}
+.popboxleft_suggested, .popbox_suggested {
+  visibility:visible; opacity:0.75;
+}
+.popboxleft_hover, .popbox_hover, 
+.btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
+.btndo_hover, .btndosm_hover, .btnn:hover, .btnmain:hover {
+  background-color:#ffffc0; border-color:#b0b0ff; /*color:#8080ff;*/
+}
+.btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
+.btndo_hover, .btndosm_hover, .btntext_hover, .btntext_toggled,
+.btnn:hover, .btnmain:hover {
+  color:#8080ff;
+}
+.btnplain_hover {
+  background-color:transparent;
+}
+.popboxleft_hover, .popbox_hover {
+  visibility:visible; opacity:1;
+}
+.popbox_toggled, .popboxleft_toggled, 
+.popclk_toggled, .popclkleft_toggled, .popclktop_toggled,
+.btn_toggled, .btnclk_toggled, .btnbig_toggled, .btnsm_toggled,
+.btnmain_toggled, .btnplain_toggled { 
+  background-color:#ffffc0;
+  border-style:solid; border-color:#b0b0ff; color:#8080ff;
+}
+.popbox_toggled, .popboxleft_toggled,
+.popclk_toggled, .popclkleft_toggled, .popclktop_toggled { 
+  visibility:visible; opacity:1; 
+  background-color:white; color:#505050; box-shadow:3px 3px 3px #888888;
+}
+.btn_pressed, .btnclk_pressed, .btnbig_pressed, .btnsm_pressed, 
+.btnmain_pressed, .btnplain_pressed, .btnn:active,
+.btndo_pressed, .btndosm_pressed {
+  background-color:white;
+}
+.popbox_childfocused, .popboxleft_childfocused, 
+.popclk_childfocused, .popclkleft_childfocused, .popclktop_childfocused { 
+  background-color:#e8e8e8;
+}
+.back {
+  position:absolute; top:0; left:0; width:100%;
+  margin:0; border:0; padding:2em 2.5em;
+  background-color:white;
+}
+.back_childfocused {
+  background-color:#c8c8c8; color:#b0b0b0;
+}
+.graybox {
+  display:inline-block; margin:0; border:0; padding:0.2em 0.4em;
+  background-color:#f0f0f0;
+}
+.btnvapor {
+  background-color:transparent; font-size:5%;
+  display:inline-block; margin:0; border:0; 
+}
+a {
+  background-color:transparent;
+}
+table, td, div {
+  border:0; margin:0; padding:0;
+  vertical-align:top; text-align:left;
+}
+.mintable table, .mintable td {
+  border-spacing:0;
+}
+.panesep {
+  padding:0; border-right:1px dotted gray; 
+  background-color:transparent; min-width:2em; 
+}
+.oneline {
+  display:inline-block; white-space:nowrap;
+}
+.right {
+  float:right;
+}
+.minspc {
+  font-size:10%; display:block;
+}
+.halfspc {
+  font-size:50%; display:block;
+}
+.small, .smsz {
+  font-size:70%;
+}
+.medsz {
+  font-size:80%;
+}
+.regsz {
+  font-size:100%;
+}
+.lgsz {
+  font-size:110%;
+}
+.title {
+  font-size:130%; /*line-height:90%;font-weight:bold;*/
+}
+textarea, input[type="text"], input[type="check"] {
+  border:1px solid #c8c8c8;
+}
+.statbig {
+  font-size:110%; 
+}
+.data {
+  color:#303030;
+}
+.valid, .stat {
+  color:#00ff00;
+}
+.invalid, .staterr {
+  color:#ff0000;
+}
+.tt {
+  font-family:"courier new","lucida console",monospace;
+}
+.i {
+  font-style:italic;
+}
+a:visited {
+  color:gray;
+}
+td .btm, .tdbtm {
+  vertical-align:bottom;
+}
+td .right, .tdright {
+  text-align:right;
+}
