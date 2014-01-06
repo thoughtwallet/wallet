@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<!--
+     Bitcoin FAQs
+-->
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bitcoin Primer / FAQ</title>
+  <meta content="bitcoin primer and FAQ" name="description">
+  <meta content="mWallet" name="author">
+  <style>
+    body {
+      margin:0; padding:0;
+      font-family:"Arial", sans-serif; font-size:93%;
+      color:#404040; background-color:#c8c8c8;
+      font-stretch:expanded;
+    }
+    .pg {
+      margin:0 auto; padding:2.5em 2em;
+      background-color:white; width:46em;
+    }
+    .title {
+      font-size:140%; font-weight:500;
+    }
+    .faqq {
+      font-size:110%; font-weight:600;
+    }
+    .tt {
+      font-family:"courier new","lucida console",monospace;
+    }
+    .small {
+      font-size:70%;
+    }
+    .verysmall {
+      font-size:60%;
+    }
+    .oneline {
+      display:inline-block;
+    }
+    .right {
+      float:right;
+    }
+  </style>
+</head>
+
+<body><div class="pg">
+
+<span class="title oneline">Bitcoin Primer</span> &nbsp;
+<sup class="verysmall right">
+[<a href="http://creativecommons.org/licenses/by/3.0/"
+title="License of the content on this page">CC-BY</a>]
+</sup>
+
+<br/><br/>
+
+<p id="addr">
+<span class="faqq">Bitcoin Addresses and Keys</span>
+</p><p>
+A bitcoin address is a number mathematically calculated from a 
+private key irreversibly (the 
+private key can not be determined from the address).
+</p><p>
+Addresses
+provide "locations" for the storage of bitcoins, and
+coins are typically sent from one address to another.  When 
+coins are sent, the sender is required to prove 
+ownership of the coins
+by signing them using the private key of the 
+address where they are stored.  
+The signature proves the correct
+private key was used without revealing it.
+</p><p>
+A private key must be memorized or stored securely. 
+If a private key is lost,
+coins stored at the associated address can never be spent.
+</p><p>
+In technical terms, a bitcoin address is an abbreviation 
+(hash) of the public key 
+part of an <a href="http://wikipedia.org/wiki/ECDSA">ECDSA key pair</a>.  
+</p>
+
+<p id="pass">
+<span class="faqq">Passphrases</span>
+</p><p>
+Many bitcoin clients allow 
+a passphrase to be used as a private key.  
+When a passphrase is used, nothing needs to be written down or stored,
+but a carelessly devised passphrase is not secure.
+<!--
+</p><p>
+One method often used to compose passphrases
+is to replace letters
+with numbers and special characters, for example
+<span class="tt">
+"heavy is the head that wears a crown"</span>
+might become 
+<span class="tt">
+"h3^vy |s $h3 h3^d $h^$ w3^rs ^ cr.wn"</span>. 
+-->
+</p><p>
+A passphrase composed in normal 
+language generally should include at least 20 
+words, although fewer words can be used if the phrase is random
+and the size of the dictionary is large.  Nonsense
+(dada) phrases can be secure.
+Absurd poems and short stories can also be composed.
+Passages from published works are
+sometimes used, but only if many of the words 
+are replaced, swapped, and/or combined.
+<!--For example, the passages
+<span class="tt">
+"suffer the slings and arrows of outragous fortune"</span>
+and <span class="tt">
+"heavy is the head that wears a crown"</span>
+might be combined to produce 
+<span class="tt">
+"suffer is slings head arrows wears outragous crown"</span>.
+-->
+</p><p>
+A strong passphrase can also be extracted from a printed work using
+various geometric sampling techniques, such as
+copying characters vertically from a particular page and column
+(the page and column chosen would be based on numbers that 
+are easy for the user to remember but not public).
+Different printed editions of a work would likely produce 
+different passphrases.  An e-book or other digital text can be 
+printed using unusual font faces and sizes to produce a 
+source text to sample, provided that the printed text can be
+reproduced exactly whenever the key is needed.
+</p><p>
+A series of passphrases can be produced by
+generating a random key and attaching various words to it.
+The
+random key would be written down and secured and the attachments
+would be memorized, i.e., 
+<span class="tt">
+"5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS"</span>
+might be used to form 
+<span class="tt">
+"5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS zebra"</span>
+and <span class="tt">
+"5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS rabbit"</span>
+</p>
+
+
+<p id="brain">
+<span class="faqq">Brain wallets</span>
+</p><p>
+Many bitcoin users 
+prefer to memorize or write
+down private keys rather than digitally store them
+to prevent their theft by hacking.
+</p><p>
+A "brain wallet" is a bitcoin client that does not store private keys
+on any device or server.  Typically, brainwallets allow 
+passphrases to be used as private keys.
+</p><p>
+Note that private keys/passphrases can still be vulnerable
+on any device infected with keyboard-logging or similar malware, because
+eventually the private key must be input to sign transactions.  
+To reduce this risk,
+a brain wallet can be used on a dark box.
+</p>
+
+
+<p id="darkbox">
+<span class="faqq">Using a Dark Box to enhance security</span>
+</p><p>
+Since an internet connection provides a conduit for malware infections and other attacks that can undermine the security of installed software, 
+experts often recommend using a quarantined device ("dark box") to perform 
+critical security functions, such as those that generate 
+keys for cryptography or use the keys to encrypt or sign data.
+</p><p>
+A bitcoin client that allows wallet
+data and new transactions to be imported and exported to files 
+can be run on a dark box.  A thumb drive or SD card can be used
+to physically move downloaded wallet (transaction history) data 
+to the quarantined device, 
+and also to move signed transactions back to a
+net-connected device to be broadcast to the bitcoin network.
+In this way, private keys/passphrases need never be revealed to
+any device with an internet connection, and the client and
+underlying encryption
+software is also not exposed to potentially corrupting attacks.
+</p><p>
+Since malicious code can be inserted into many types of files,
+data moved between quarantined and net-connected devices should
+be in plain text form, and only the most basic of text editors
+should be used to open and save it.  
+In addition, if a device to be quarantined 
+was ever connected to the internet it is recommended that its
+system be wiped and re-installed.
+</p>
+
+
+<p id="multisig">
+<span class="faqq">Transactions</span>
+</p><p>
+A simple bitcoin transaction specifies
+a bundle of stored coins 
+("input") and a destination 
+address ("output"). 
+A complex transaction
+can contain many inputs and outputs.
+The difference between the value of the inputs and outputs 
+is typically refunded to the owner
+as change in an additional output.
+</p><p>
+Each transaction input references an output of
+a previous transaction.  The inputs of the previous
+transaction in turn reference outputs of older transactions, and so on.
+Transactions and thier associations form the "public ledger",
+which is crucially used by the bitcoin network
+to prevent coins from being spent more than once.
+</p>
+
+<p id="multisigout">
+<span class="faqq">Multi-Signature Transactions</span>
+</p><p>
+Multi-signature transaction outputs require proof of
+M keys (signatures) of N 
+addresses to spend the coins.
+In the bitcoin protocol, 
+the public key (the long form of the bitcoin address) is used to 
+identify each N (endorser).
+</p><p>
+Multisig outputs can be used to enforce several types of contracts.  
+A simple example is a couple, Alice and Bob,
+who wish to have joint
+control of a coin hoard, where both would have to agree to 
+spend any of it.  The coins would be sent to a 2 of 2 multisig 
+output specifying
+both Alice and Bob as endorsers (presumably Alice and Bob would
+not reveal thier private keys to each other).
+</p><p>
+Possessing M keys suffices to claim a multisig 
+output, so it
+is possible to create outputs that different people can validly
+spend, setting up a race condition for the coins.
+</p><p>
+The bitcoin reference client currently enforces a limit 
+of N=3, but the underlying protocol supports N <= 16.
+</p>
+
+<p id="multisig_escrow">
+<span class="faqq">Using Multisig for Escrow Contracts</span>
+</p><p>
+A common use of multisig is to enforce escrow contracts,
+which involve payments that finalize once specified conditions 
+are satisfied. 
+A common escrow contract requires 2 of 3 signatures
+for redemption, where the three participants are the payer, 
+the conditional recipient, and  
+a dispute-resolution agent.
+</p><p>
+As an example, consider Mary who hires Bob to build a barn on her 
+ranch, agreeing to pay Bob 300 BTC opun completion of the 
+work.  Alice will mediate any dispute 
+that may arise.  Mary sends a bitcoin transaction 
+containing a multisig output specifying herself,
+Bob, and Alice as endorsers.
+</p><p>
+<i>Scenario 1:</i> Bob completes the work as expected.  
+Mary and Bob sign the output payable to Bob.
+</p><p>
+<i>Scenario 2:</i> Bob never shows up to do the work.  
+Mary contacts Alice.
+Mary and Alice sign the output payable to Mary. 
+</p><p>
+<i>Scenario 3:</i> Bob completes the work but Mary ignores his
+requests for payment.   Bob contacts Alice.  
+Bob and Alice sign the output payable to Bob.
+</p><p>
+<i>Scenario 4:</i> Bob finishes the work but Mary considers the job 
+incomplete according to her specifications.   Bob refuses to
+perform the additional work and contacts Alice.
+Alice mediates and all eventually agree that Bob should receive two-thirds.
+Mary and Alice sign the output payable to Alice, who then
+sends 200 BTC to Bob and 100 BTC to Mary.
+</p>
+
+<p>
+<span class="faqq">Using Multisig for Secure Backups</span>
+</p><p>
+A multisig transaction output requiring one of two
+signatures for redemption (M=1 of N=2) can be used to insure against
+the loss of a stored coin hoard in the event a key is destroyed or
+passphrase is forgotten.  In such cases, the backup key could be
+retrieved (from a safe-deposit, for example) and used to recover the
+coins.
+</p>
+
+
+</p>&nbsp;<p>
+</p>&nbsp;<p>
+
+
+<!--
+<p id="poem">
+<span class="faqq">Q.</span> What is a "crypto-poem"?
+</p><p>
+A crypto-poem is a sequence of randomly generated words that
+can be used as a strong private key.  Since a word sequence can be
+memorized by a human without much difficulty, there is no need to 
+write down or store the key. 
+To remember a poem, imagine how the 
+words might be used in a story.
+</p>
+-->
+
+</div></body>
+</html>
