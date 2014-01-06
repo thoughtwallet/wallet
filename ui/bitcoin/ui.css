@@ -1,0 +1,224 @@
+.sel, .selsm, .sellg, .selfit, .sellgfit, .selsmfit, 
+.history, .histfit, .outs, .notes {
+  padding:0; border:1px dotted gray; background-color:transparent;
+  width:22em; height:14em; font-size:90%;
+  overflow-y:auto; overflow-x:hidden;
+}
+.sel, .selfit {
+  width:24em; height:8em;
+}
+.selsm, .selsmfit {
+  width:18em; height:4em;
+}
+.sellg, .sellgfit {
+  width:25em; height:12em;
+}
+.outs {
+  width:22em; height:8em;
+}
+.selfit, .selsmfit, .sellgfit, .histfit {
+  width:100%;
+}
+.notes {
+  width:50em; height:25em; border:0;
+}
+.fitminwid {
+  display:block; width:24em; height:30%;
+}
+.smfitminwid {
+  display:block; width:18em; height:30%;
+}
+.sel div, .selsm div, .sellg div, .selfit div, .selsmfit div, .sellgfit div, 
+.history div, .histfit div, .outs div {
+  border-bottom:1px dotted gray;
+  display:block; white-space:nowrap; min-width:8em;
+}
+.selcell, .leftcell, .leftselcell, .chkcell, .chkoffcell, .delcell, 
+.addrcell, .addrselcell, .rightcell, .rightselcell {
+  display:inline-block; padding:0.1em 0.2em; 
+}
+.leftcell, .leftselcell, .chkcell, .chkoffcell, .delcell {
+  border-right:1px dotted gray;
+}
+.chkcell, .chkoffcell, .delcell, .selcell, 
+.addrselcell, .leftselcell, .rightselcell {
+  cursor:pointer;
+}
+.chkoffcell {
+  color:transparent;
+}
+.rightselcell, .addrselcell {
+  width:100%;
+}
+.willspend, .wontspend, .cantspend, .newout,
+.unconfirmed, .cantspendchk, .spendchk, .memoout {
+  border-right:1px dotted gray; padding:0.1em 0.2em;
+  display:inline-block; width:7em;
+}
+.willspend, .wontspend, .cantspend, .newout, .memoout {
+  cursor:pointer;
+}
+.txhashcell, .privcell {
+  display:inline-block; padding:0.1em 0.2em;
+}
+.willspend, .privcell {
+  background-color:#fff4f4;
+}
+.willspend:hover, .wontspend:hover, .newout:hover, 
+.chkcell:hover, .chkoffcell:hover, .memoout:hover {
+  background-color:#e0e0ff;
+}
+.delcell {
+  background-color:#f0f0f0;
+}
+.delcell:hover {
+  color:#ffffff; background-color:#505050;
+}
+.addrselcell:hover, .leftselcell:hover {
+  color:#0000ff; background-color:#e0e0ff;
+}
+.spendchk, .cantspendchk {
+  width:1em;
+}
+/*.leftcell, .leftselcell, .addrcell, .addrselcell {
+  width:20em;
+}*/
+.addrselected {
+  background-color:#e0e0e0;
+}
+.privcell {
+  font-family:"courier new","lucida console",monospace;
+}
+.addrhaskey {
+  color:#00FF00;
+}
+.cantspend {
+  color:#c0c0c0;
+  /*background-color:#e8FFe8;*/
+}
+.unconfirmed, .addrselected, .memoout, .ltgray {
+  /*background-color:#f0f0f0;*/
+  color:#a0a0a0;
+}
+.willspendtag, .wontspendtag, .cantspendtag, .unconfirmedtag {
+  display:inline-block;
+  padding-left:0.1em; padding-right:0.1em;
+}
+.wontspendtag, .wontspend {
+  color:#50e050;
+}
+.cantspendtag {
+  color:#c0c0c0;
+}
+.unconfirmedtag {
+  background-color:#f0f0f0;
+  color:#808080;
+}
+.privkey, .privkeyfit {
+  font-size:95%; font-family:"courier new","lucida console",monospace;
+  background-color:#fff0f0; width:37em;
+}
+.passent {
+  background-color:#fffbfb; color:black; width:37em; height:3em;
+}
+.pubkey, .pubkeyfit, .pubkeyent {
+  width:25em; height:5.2em; font-size:85%;
+  background-color:#f0f0ff; color:blue;
+}
+.memoent {
+  width:20em; height:5.2em; font-size:85%;
+  /*background-color:#f0fff0;*/ color:#707070;
+}
+.privkeyfit, .pubkeyfit {
+  width:100%;
+}
+.pubinfo, .addrinfo {
+  color:blue;
+}
+.pubkey, .pubkeyfit {
+  border:0; background-color:transparent;
+}
+.txshow, .txshowraw {
+  background-color:#f0f0ff;
+  width:32em;
+  height:8em;
+}
+.testjson, .testraw {
+  width:32em;
+  height:20em;
+}
+.txshowraw, .testraw {
+  height:5em;
+}
+.jsonent {
+  font-size:0.87em;
+  width:50em;
+  height:25em;
+}
+.jsonaddrent {
+  font-size:0.87em;
+  width:37em;
+  height:10em;
+}
+.rawent {
+  background-color:#f0f0f0;
+  font-size:0.83em;
+  width:60em;
+  height:6em;
+}
+.inpfit, .inpname {
+  font-size:90%; width:12em; 
+}
+.inpaddr, .inpaddrfit {
+  font-size:90%; font-family:"courier new","lucida console",monospace;
+  width:22em; background-color:#f0f0ff; color:blue;
+}
+.inpfit, .inpaddrfit {
+  width:100%;
+}
+.inptitle {
+  width:40em;
+}
+.inpfloat {
+  width:7em; background-color:transparent;
+}
+.willspendtag, .willspend, .newout, .privcell, .passent,
+.inpfloat, .privkey, .privkeyfit, .privinfo, .haskey {
+  color:#e07070;
+}
+.haskey {
+  cursor:arrow;
+}
+.inpint {
+  width:3em; background-color:transparent;
+}
+.qrcode {
+  width:148px; border:1px dotted #c8c8c8; background-color:white;
+}
+.fee {
+  color:#000000;
+}
+.bitaddr, .bitaddrfit {
+  font-size:95%; display:inline-block; overflow-x:hidden;
+  white-space:nowrap; width:20em;
+}
+.bitaddrfit {
+  width:100%;
+}
+.addrshow {
+  color:#8080ff;
+}
+.addrnameshow, .addrnameinp {
+  color:#a09040;
+  text-decoration:italic;
+}
+.addrnameinp {
+  background-color:#ffffe0;
+}
+.bitaddr a, .bitaddresssmall a {
+  /*color:#00ff00;*/
+}
+/*.graybox {
+  width:22em; font-size:90%;
+}*/
+
