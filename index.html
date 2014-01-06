@@ -1,71 +1,926 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Wallet by thoughtwallet</title>
+<!DOCTYPE html>
+<!--
+  ThoughtWallet 
+  Source code MIT licensed unless otherwise indicated in the file
+-->
+<html lang="en"> 
+<head>
+  <meta charset="utf-8">
+  <title>ThoughtWallet - 
+         Bitcoin Brainwallet with Multi-Signature and Memo Output Support</title>
+  <meta content="bitcoin client-side javascript wallet with multi-signature and memo output support" name="description">
+  <meta content="ThoughtWallet" name="author">
+  <link rel="stylesheet" type="text/css" href="ui/uicontroller.css">
+  <link rel="stylesheet" type="text/css" href="ui/bitcoin/ui.css">
+  <script src="lib/ui/transev/transev.js"></script>
+  <script src="lib/ui/elemstate/elemstate.js"></script>
+  <script src="lib/ui/elemstate/statetools.js"></script>
+  <script src="lib/bitcoin/bitcoinjs/build/bitcoinjs-min.js"></script>
+  <script src="lib/bitcoin/mbitcoinjs/src/mbitcoinjs.js"></script>
+  <script src="lib/bitcoin/mbitcoinjs/src/impexp.js"></script>
+  <script src="lib/bitcoin/rfc1751.js"></script>
+  <script src="lib/bitcoin/qrcode.js"></script>
+  <script src="ui/uicontroller.js"></script>
+  <script src="ui/bitcoin/uiaddress.js"></script>
+  <script src="ui/bitcoin/uiwallet.js"></script>
+  <script src="ui/bitcoin/uitx.js"></script>
+  <script>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Wallet</h1>
-        <p>bitcoin javascript brain wallet with multisig and memo output support</p>
+    //edit these if desired
 
-        <p class="view"><a href="https://github.com/thoughtwallet/wallet">View the Project on GitHub <small>thoughtwallet/wallet</small></a></p>
+    UIB.defaultFee = "0.00001";
+    UIB.maxFee = "0.0001";
+
+    // some chicken wire to interconnect the UI controllers
+
+    var gc = walc = ctc = wc = ptc = moc = null;
+    var msc = pvc = payto = txc = pvkc = null;
+    var noc = stoc = acc = waoc = loac = null;
+
+    function topop_( toid ) {TEM.burstEvent( "focus", TEM.getElem(toid) );}
+    function topop( toid ) {setTimeout( "topop_("+toid+")", 20 );}
+    function towc() {topop('w_pop');}
+    function towd() {topop('wd_pop');}
+    function towalc() {topop('wal_pop');}
+    function tonoc() {topop('no_pop');}
+    function tomsc() {topop('ms_pop');}
+    function tontx() {topop('ntx_pop');}
+
+    function pgload() {
+      ESM.initPage();
+
+      // init address cache controller
+      acc = UIB.addrCache.createController();
+      acc.onVerifyOk = function(id)
+        {if(id==this.ids.addpubclk)topop('ac_pop');}
+
+      // init addr generator, wallet addrs, addr option controllers
+      gc = UIB.gen.createController();
+      waoc = UIB.walletAddrOpt.createController();
+      //waoc.onSelOk = waoc.onVerifyOk = function() {towalc();}
+      walc = UIB.walletAddrs.createController();
+      walc.controllers = {addr:waoc,gen:gc};
+
+      // init load from addr controller
+      loac = UIB.addrOptList.createController();
+      loac.onSelOk = loac.onVerifyOk = function() {towd();}
+
+      // init spendable outputs controller
+      wc = UIB.wallet.createController();
+      wc.onLoadClk = function(id) 
+                        {if(id==this.ids.clear||id==this.ids.load)towd();}
+      wc.controllers = {addrs:walc,loadaddr:loac};
+
+      // init pay to controller
+      ptc = UIB.payTo.createController();
+      ptc.onSelOk = ptc.onVerifyOk = function() {tonoc();}
+
+      // init multisig and pubkey controllers
+      pkc = UIB.pubKey.createController();
+      msc = UIB.multisig.createController();
+      msc.controllers.pub = pkc;
+      msc.onVerifyOk = function() {tonoc();}
+
+      // init memo controller
+      moc = UIB.memo.createController();
+      moc.onVerifyOk = function(id) {if(id==this.ids.accept)tonoc();}
+
+      //init new out, outs list controllers
+      noc = UIB.newout.createController();
+      noc.controllers = {wallet:wc,addr:ptc,multisig:msc,memo:moc};
+      noc.onVerifyOk = function() {towc();}
+      stoc = UIB.sendToOuts.createController();
+      stoc.controllers = {wallet:wc,newout:noc};
+      stoc.onSelOk = function() {tonoc();}
+      wc.controllers.newtx = stoc;
+      noc.controllers.newouts = stoc;
+
+      // init chg to selector
+      ctc = UIB.chgTo.createController();
+      ctc.controllers.addrs = walc;
+      ctc.onSelOk = function() {towc();}
+
+      // init create tx controller
+      txc = UIB.newtx.createController();
+      txc.controllers = {wallet:wc,newouts:stoc,chgto:ctc,keys:walc};
+      txc.onVerifyOk = function(id) {if(id==this.ids.confirm)tontx();}
+
+      // init addr cache
+      acc.loadDefaults();
+    }
+  </script>
+</head>
+
+<body onload="pgload()"><div esmcssroot="back">
 
 
-        <ul>
-          <li><a href="https://github.com/thoughtwallet/wallet/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/thoughtwallet/wallet/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/thoughtwallet/wallet">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<!-- =====================TOP BAR===================== -->
+<div class="inlinewidget" style="width:60%">
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+  <!-- =====WALLET WIDGET =====--> <div class="inlinewidget">
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+  <button id="w_tog" esmcssroot="btnmain" esmtoggletarget="w_pop">
+    ThoughtWallet
+  </button>
+  <br/>
+  <div id="w_pop" esmcssRoot="popbox" esmfocusid="wal_tog">
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+    <!-- LEFT WALLET PANE -->
+    <table><tr><td>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+      <!-- KEYS/DATA BUTTON BAR -->
+      <div class="graybox">
+        <span class="small">Wallet &nbsp;</span>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+        <!-- ADDRESS LIST CONTROLLER -->
+        <div class="inlinewidget">
+          <button esmcssroot="btn" esmtoggletarget="wal_pop" id="wal_tog">
+                            Keys</button>
+          <br/>
+          <div id="wal_pop" esmcssRoot="popbox" esmfocusid="gen_tog">
+            <div id="wal_list" class="selfit"></div>
+            <div class="fitminwid">&nbsp;</div>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+            <!-- KEY OR ADDRESS OPTION LINE -->
+            <div class="oneline inlinewidget">
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+              <!-- GENERATOR CONTROLLER -->
+              <div class="inlinewidget">
+                <button esmcssroot="btn" esmtoggletarget="gen_pop" id="gen_tog">
+                                     Keys</button>
+                <br/>
+                <div id="gen_pop" esmcssRoot="popbox" esmfocusid="gen_pass">
+                  <div id="gen_addr" class="bitaddrfit">
+                            &nbsp;</div>
+                  <br/>
+                  <span class="medsz">Passphrase or private key:</span>
+                  <br/>
+                  <textarea id="gen_pass" class="passent"></textarea>
+                  <br/>
+                  <div class="oneline right">
+                    <button esmcssroot="btndosm" id="gen_gen"
+                        title="Generate address from passphrase or key entry">
+                               Generate from entry</button>
+                    <button esmcssroot="btndosm" id="gen_rand" 
+                            title="Generate random key pair">Random</button>
+                    <div class="inlinewidget">
+                      <button esmcssroot="btnsm" 
+                              esmtoggletarget="gen_minepop" id="gen_minetog"
+                              title="Mine (search for) a vanity address">
+                                     Mine</button>
+                      <br/>
+                      <div id="gen_minepop" esmcssRoot="popclk" 
+                           esmfocusid="gen_minematch">
+                        <span class="medsz oneline">
+                                 Substring(s) to find:</span>
+                        <br/>
+                        <input type="text" id="gen_minematch" class="inpaddrfit"
+                               title="Substring to find"/>
+                        <div class="minspc">&nbsp;</div>
+                        <input type="text" id="gen_minematch2" class="inpaddrfit"
+                               title="Or substring match (optional)"/>
+                        <div class="minspc">&nbsp;</div>
+                        <input type="text" id="gen_minematch3" class="inpaddrfit"
+                               title="Or substring match (optional)"/>
+                        <br/>
+                        <button esmcssroot="btndosm" id="gen_mine"
+                                title="Start/stop search for vanity address">
+                                         Start</button>
+                        <br/>
+                        <span class="small">
+                                 Searches for '1<i>substring</i>...'
+                        <br/>
+                        Any one substring matches</span>
+                      </div>
+                    </div>
+                  </div>
+                  <br/>
+                  <span class="medsz privinfo" id="gen_privofpass">&nbsp;</span>
+                           <span class="medsz">&nbsp;</span>
+                  <div class="minspc">&nbsp;</div>
+                  <div class="minspc">&nbsp;</div>
+                  <button esmcssroot="btndo" id="gen_ok"
+                          title="Add key/address pair to wallet">
+                          Add to wallet</button>
+                       &nbsp; <span id="gen_stat">&nbsp;</span>
+                </div>
+              </div>
+              <!-- END GENERATOR CONTROLLER -->
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+              <!-- WALLET ADDRESS OPTION CONTROLLER -->
+              <div class="inlinewidget">
+                <button esmcssroot="btnclk" esmtoggletarget="wao_pop"
+                        title=
+             "Add addresses without keys (keys are needed to create transactions)">
+                                     Addresses</button>
+                <br/>
+                <div id="wao_pop" esmcssRoot="popclk" esmfocusid="wao_addr">
+                  <span class="small">
+                         Bitcoin address to add to wallet:</span><br/>
+                  <input type="text" id="wao_addr" class="inpaddr"
+                         title="Standard bitcoin address"/>
+                  <br/>
+                  <button esmcssroot="btndosm" id="wao_ok"
+                          title="Add entered bitcoin address to wallet">
+                          Add</button>
+                  &nbsp; <span id="wao_stat"></span>
+                  <div class="minspc">&nbsp;</div>
+                  <div class="minspc">&nbsp;</div>
+                  <div class="minspc">&nbsp;</div>
+                  <span class="small">
+                         or add frequently used wallet address:</span>
+                  <br/>
+                  <div id="wao_list" class="selfit"></div>
+                  <div class="small">
+                    Keys are needed to create transactions
+                  </div>
+                </div>
+              </div>
+              <!-- END WALLET ADDRESS CONTROLLER -->
+  
+            </div>
+            <!-- END KEY/ADDRESS OPTION LINE -->
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+            <div class="inlinewidget small right">
+              <input class="small" type="checkbox" id="wal_details"
+                     title="Show key/address details on hover">details</input>
+            </div>
+            <br/>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/thoughtwallet">thoughtwallet</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+            <!-- ADDR INFO CONTROLLER -->
+            <div id="wali_details" class="inlinewidget" style="display:none;">
+              <br/>
+              <table class="mintable" style="width:100%;"><tr><td>
+                <span class="small">Bitcoin address (standard):</span>
+                <br/>
+                <div id="wali_addr" class="bitaddr">&nbsp;</div>
+                <br/>
+                <span class="small">Bitcoin address (hash 160):</span>
+                <br/>
+                <span class="medsz addrinfo" id="wali_hash160">&nbsp;</span>
+                <br/>
+                <span class="small">Public key:</span>
+                <br/>
+                <textarea class="pubkey" id="wali_pub"></textarea>
+              </td><td style="width:6%;">&nbsp; &nbsp;
+              </td><td style="text-align:right;width:10%;">
+                <span class="right"><div id="wali_qr"></div></span>
+              </td></tr></table>
+              <span id="wali_pass">&nbsp;</span>
+                   <span class="medsz">&nbsp;</span>
+              <br/>
+              <div class="small">Private key:
+                   <input type="checkbox" id="wali_showpriv">show</input></div>
+              <span class="medsz privinfo" id="wali_key">&nbsp;</span>
+                   <span class="medsz">&nbsp;</span>
+            </div>
+            <!-- END ADDR INFO CONTROLLER -->
+        
+          </div>
+        </div>
+        <!-- END ADDRESS LIST CONTROLLER -->
+
+        <!-- LOAD CONTROLLER -->
+        <div class="inlinewidget">
+          <button esmcssroot="btn" esmtoggletarget="wd_pop">
+                            Data</button>
+          <br/>
+          <div id="wd_pop" esmcssRoot="popbox" esmfocusid="wlnet_tog">
+             <div class="inlinewidget oneline">
+              <span class="medsz">Load/sync from: </span>
+
+              <!-- LOAD ADDRESS OPTION CONTROLLER -->
+              <div class="inlinewidget">
+                <button esmcssroot="btnclk" 
+                            id="wlnet_tog" esmtoggletarget="wlnet_pop"
+                            title="Load transaction data from network">
+                                     Net</button>
+                <br/>
+                <div id="wlnet_pop" esmcssRoot="popclk" esmfocusid="aol_addr">
+                  <button esmcssroot="btndo" id="w_load">
+                            Load transactions for all addresses in wallet</button>
+                  <br/>
+                  <br/>
+                  <span class="medsz">Or load transactions for address:</span>
+                  <br/>
+                  <input type="text" id="aol_addr" class="inpaddr"
+                         title="Standard bitcoin address"/>
+                  <br/>
+                  <button esmcssroot="btndosm" id="aol_ok"
+                          title="Load transactions for entered address">
+                            Accept entry</button>
+                  &nbsp; <span id="aol_stat"></span>
+                  <div class="minspc">&nbsp;</div>
+                  <div class="minspc">&nbsp;</div>
+                  <div class="minspc">&nbsp;</div>
+                  <span class="small">
+                     Or load transactions for frequently used address:</span>
+                  <br/>
+                  <div id="aol_list" class="selfit"></div>
+                </div>
+              </div>
+              <!-- END LOAD ADDRESS CONTROLLER -->
+
+              <button esmcssroot="btn" id="w_loadfile"
+                  title="Load transactions from text file(s)">Files</button>
+              <input type="file" style="display:none;" 
+                                  multiple accept="text/*" id="w_file" />
+              <div class="oneline">
+                <button esmcssroot="btnclk" esmtoggletarget="wt_pop"
+                           title="Load transactions from entered or pasted text">
+                           Text</button>
+                <br/>
+                <div id="wt_pop" esmcssRoot="popclk" esmfocusid="w_text">
+                  <textarea id="w_text" class="jsonent"></textarea><br/>
+                  <button esmcssroot="btndo" id="w_loadtext"
+                          title="Load transactions into wallet">
+                             Ok</button>
+                </div>
+              </div>
+            </div>
+
+            <br/>
+            <span class="valid" id="w_loadinfo"></span>
+              <span id="w_stat">&nbsp;</span>
+              <span>&nbsp;</span>
+
+            <div class="small">
+              <br/>
+              Files/text in JSON format, can be loaded from 
+              <br/>
+              http://blockexplorer.com/q/mytransactions/ADDRESS 
+              (<a href=
+"http://blockexplorer.com/q/mytransactions/"
+              target=_blank>link</a>)
+            </div>
+
+            <br/>
+
+            <div class="inlinewidget">
+              <button esmcssroot="btnclk" esmtoggletarget="wx_pop"
+                      title="Export wallet transactions to text">
+                                             Export</button>
+              <br/>
+              <div id="wx_pop" esmcssRoot="popclk" esmfocusid="w_export">
+                <button esmcssroot="btndo" id="w_export">
+                                       To text</button>
+                &nbsp; <span class="small">Transactions can be retained by 
+                              copying/pasting
+                              to text editor and saving to file</span>
+                <br/>
+                <textarea id="w_exporteddata" class="jsonent"></textarea>
+              </div>
+            </div>
+            <div class="right">
+            <div class="inlinewidget">
+              <button esmcssroot="btnclk" esmtoggletarget="wlc_pop"
+                          title="Clear transactions in wallet cache">
+                                      Clear</button>
+              <br/>
+              <div id="wlc_pop" esmcssRoot="popclk" esmfocusid="w_clear">
+                <div class="oneline medsz">Clear all transactions?</div>
+                <br/>
+                <button esmcssroot="btndo" id="w_clear">Ok</button>
+              </div>
+            </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- END LOAD CONTROLLER -->
+
+      </div>
+      <!-- END KEYS/DATA BUTTON BAR -->
+
+      <br/>
+      <br/>
+      <span class="small" 
+               title="Transaction outputs spendable by addresses in wallet">
+               Unspents</span> &nbsp; &nbsp;
+      <div class="right">
+        <span id="w_avail"
+              title="Total of spendable outputs">&nbsp;</span>
+        <span id="w_unconfirmed" 
+              title="Total of unconfirmed outputs"></span>
+      </div>
+      <br/>
+      <div id="w_outputs" class="history"></div>
+      <div class="right oneline">
+        &nbsp; <span id="w_selout"></span> &nbsp; 
+        <button esmcssroot="btndosm" id="w_selall"
+                title="Select all unspents">Spend all</button>
+      </div>
     
-  </body>
+      <br/>
+
+      <!-- OUTPUT INFO CONTROLLER -->
+      <div class="small">
+        <input type="checkbox" id="w_details" disabled
+               title="Show details of unspent output on hover">details</input>
+      </div>
+      <div id="w_info" style="display:none;">
+        <span id="w_infoval">&nbsp;</span>
+              &nbsp; &nbsp;<span class="medsz" id="w_infoindex">&nbsp;</span>
+        <br/>
+        <span class="medsz" id="w_infotxhash">
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span>
+        <br/>
+        <span id="w_infodescr" class="medsz">&nbsp;</span>
+        <br/>
+        <span id="w_infoaddr1" class="medsz">&nbsp;</span>
+        <br/>
+        <span id="w_infoaddr2" class="medsz">&nbsp;</span>
+        <br/>
+        <span id="w_infoaddr3" class="medsz">&nbsp;</span>
+      </div>
+      <!-- END OUTPUT INFO CONTROLLER -->
+
+    </td>
+    <!-- END LEFT WALLET PANE -->
+
+    <td class="panesep">
+                 &nbsp; &nbsp; &nbsp; &nbsp;</td>
+    <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+
+    <!-- RIGHT TX PANE -->
+    <td>
+      New Transaction  &nbsp;
+      <br/>
+      <div class="halfspc">&nbsp;</div>
+      <br/>
+      <span class="small"
+            title="Outputs to include in new transaction">Outputs</span> &nbsp; 
+
+      <!-- NEW OUTPUT CONTROLLER -->
+      <div class="inlinewidget">
+        <button id="no_tog" esmcssroot="btn" esmtoggletarget="no_pop">
+                          New</button>
+        <br/>
+        <div id="no_pop" esmcssRoot="popbox" esmfocusid="no_val">
+          <div id="no_payto" class="bitaddr"
+               title="Pay to">&nbsp;</div>
+          <br/>
+ 
+          <!-- PAY TO ADDRESS CONTROLLER -->
+          <div class="inlinewidget">
+            <button id="pt_tog" esmcssroot="btn" esmtoggletarget="pt_pop">
+                          Pay to address</button>
+            <br/>
+            <div id="pt_pop" esmcssRoot="popbox" esmfocusid="pt_addr">
+              <span class="small">Address:</span>
+              <br/>
+              <input type="text" id="pt_addr" class="inpaddr"
+                     title="Standard bitcoin address"/>
+              <button esmcssroot="btndosm" id="pt_ok"
+                      title="Pay to entered address">Accept entry</button>
+              &nbsp;&nbsp;<span id="pt_stat"></span>
+              <div class="halfspc">&nbsp;</div>
+              <span class="small">or pay to frequently used address:</span>
+              <br/>
+              <div id="pt_list" class="selfit"></div>
+            </div>
+          </div>
+          <!-- END PAY TO ADDRESS CONTROLLER -->
+
+          <span class="medsz"> or </span>
+
+          <!-- MULTISIG CONTROLLER -->
+          <div class="inlinewidget">
+            <button esmcssroot="btn" esmtoggletarget="ms_pop">
+                              Multisig</button>
+            <br/>
+            <div id="ms_pop" esmcssRoot="popbox" esmfocusid="ms_ok">
+              <div class="oneline">
+                <span class="medsz">M: </span>
+                <span id="ms_M" class="lgsz data"
+                      title="Number of signatures required to redeem">&nbsp;</span>
+                &nbsp;
+                <button esmcssroot="btndosm" id="ms_Mi">+</button>
+                <button esmcssroot="btndosm" id="ms_Md">-</button>
+                &nbsp;
+                <span class="medsz"> of N: </span>
+                <span id="ms_N" class="lgsz data"
+                      title="Number of endorsers">&nbsp;</span>
+                &nbsp;
+              </div>
+              <br/>
+              <div class="minspc">&nbsp;</div>
+              <div id="ms_list" class="selsm"></div>
+              <span id="ms_stat"></span>&nbsp;&nbsp;
+              <br/>
+              <!-- PUBKEY CONTROLLER -->
+              <div class="oneline">
+                <button esmcssroot="btn" esmtoggletarget="pk_pop">
+                         Public key</button>
+                <br/>
+                <div id="pk_pop" esmcssRoot="popbox" esmfocusid="pk_pub">
+                  <span class="small">Public key to add to multisig:</span>
+                  <br/>
+                  <textarea id="pk_pub" class="pubkeyent"
+                        title="Full public key (130 chars hex)"></textarea><br/>
+                  <button esmcssroot="btndosm" id="pk_ok"
+                        title="Add entered public key to multisig output">
+                                    Add</button>
+                  &nbsp;<span id="pk_stat"></span>
+                  <div class="minspc">&nbsp;</div>
+                  <span class="small">
+                              or add address with known public key:</span>
+                  <br/>
+                  <div id="pk_list" class="selsmfit"></div>
+                </div>
+              </div>
+              <!-- END PUBKEY CONTROLLER -->
+              &nbsp;
+              <div class="right">
+                <button esmcssroot="btndo" id="ms_ok"
+                        title="Accept multisig output">Ok</button>
+              </div>
+              <br/>
+              <div class="halfspc">&nbsp;</div>
+              <div class="inlinewidget small">
+                Current bitcoin reference client limits N to 3 (protocol
+                limits N to 16).  Outputs with N>3 may not confirm.
+              </div>
+            </div>
+          </div>
+          <!-- END MULTISIG CONTROLLER -->
+
+          <span class="medsz"> or </span>
+
+          <!-- MEMO CONTROLLER -->
+          <div class="inlinewidget">
+            <button esmcssroot="btn" esmtoggletarget="memo_pop">
+                         Memo</button>
+            <br/>
+            <div id="memo_pop" esmcssRoot="popbox" esmfocusid="memo_text">
+              <div class="small">
+                <input type="checkbox" id="memo_hex"
+                      title="Enter raw data (hex)">Raw data (hex)</input>
+              </div>
+              <textarea id="memo_text" class="memoent"
+                        title="Memo or data"></textarea>
+              <br/>
+              <button esmcssroot="btndosm" id="memo_ok"
+                      title="Accept entered text">Accept</button>
+              &nbsp;<span id="memo_stat"></span>
+            </div>
+          </div>
+          <!-- END MEMO CONTROLLER -->
+
+          <br/>
+          <br/>
+          <div class="oneline">
+            <span class="medsz">Amount:</span> 
+            <input type="text" id="no_val" class="inpfloat"
+                   title="Value of new output"/>
+          </div>
+          <br/>
+          <br/>
+          <button esmcssroot="btndo" id="no_add"
+                  title="Add output to new transaction">Add output</button>
+          &nbsp;&nbsp;<span id="no_stat"></span>
+        </div>
+      </div>
+      <!-- END NEW OUTPUT CONTROLLER -->
+
+      <div class="minspc">&nbsp;</div>
+
+      <div id="sto_outputs" class="outs"></div>
+
+      <br/>
+
+      <span class="medsz">Total:</span><span id="sto_out"
+                    title="Total to spend">&nbsp;</span>
+          &nbsp; &nbsp; &nbsp; &nbsp;  <span class="medsz">Fee:</span> 
+          <input type="text" id="sto_fee" class="inpfloat" value=""/>
+
+      <br/>
+      <br/>
+
+      <div class="oneline">
+        <span class="medsz">Change:</span><span id="sto_chgval"
+                      title="Amount to refund (selected unspents - new tx total)">
+                                             &nbsp; &nbsp; </span> 
+        <span class="medsz"> &nbsp; refund to:</span>
+        <!-- CHGTO LIST CONTROLLER -->
+        <div class="inlinewidget">
+          <button esmcssroot="btnsm" id="ct_tog" esmtoggletarget="ct_pop">
+                              select</button>
+          <br/>
+          <div id="ct_pop" esmcssRoot="popbox" esmfocusid="ct_ok">
+            <span class="small">Addresses in wallet:</span>
+            <button esmcssroot="btnvapor" id="ct_ok">&nbsp;</button>
+            <br/>
+            <div id="ct_list" class="selsm"></div>
+          </div>
+        </div>
+        <!-- END CHGTO LIST CONTROLLER -->
+      </div>
+      <br/>
+      <div id="tx_chgto" class="bitaddr"
+           title="Address to receive refunded change">&nbsp;</div>
+
+      <br/>
+      <br/>
+      <br/>
+
+      <!-- NEW TX CONTROLLER -->
+      <div class="right inlinewidget">
+        <button esmcssroot="btnclk" esmtoggletarget="ntx_pop"
+                                    esmdeactivateid="ntx_ok"
+                title="Generate and/or send new transaction">
+                     Create/Send</button>
+        <br/>
+        <div id="ntx_pop" esmcssRoot="popclkleft" esmfocusid="ntx_hex">
+          <button esmcssroot="btndo" id="ntx_create"
+                  title="Generate (sign) new transaction">Create</button>
+          <button esmcssroot="btndo" id="ntx_send"
+                  title="Broadcast generated transaction">Send</button>
+          &nbsp;<span id="ntx_stat"></span>
+          <div class="right">
+            <div class="inlinewidget">
+              <button esmcssroot="btnsm" esmtoggletarget="ntx_confirmpop"
+                      title="Confirm generated transaction" id="ntx_confirmtog">
+                                        Confirm</button>
+              <br/>
+              <div id="ntx_confirmpop" esmcssRoot="popclk" esmfocusid="ntx_confirm">
+                <span class="medsz oneline">Was transaction sent/confirmed?</span>
+                <br/>
+                <button esmcssroot="btndo" id="ntx_confirm">Yes</button>
+              </div>
+            </div>
+            <button esmcssroot="btndosm" id="ntx_cancel"
+                    title="Undo generated transaction if unconfirmed">Cancel</button>
+          </div>
+          <br/>
+          <span class="small">New transaction (raw):</span>
+          <br/>
+          <textarea id="ntx_hex" class="rawent" readonly
+                    title="New transaction raw data (hexcode)"></textarea>
+          <br/>
+          <div class="inlinewidget">
+            <button esmcssroot="btnsm" esmtoggletarget="wx_popjson" id="ntx_jsontog"
+                    title="Show generated transaction in JSON text form">
+                                        Show in JSON form</button>
+            <div id="wx_popjson" esmcssRoot="popclktop" esmfocusid="ntx_json">
+              <textarea id="ntx_json" class="jsonent" readonly></textarea>
+            </div>
+          </div>
+          &nbsp; &nbsp; &nbsp;
+          <span class="small">
+            Raw transaction 
+            can be broadcast by copying/pasting 
+              <a href="http://www.blockchain.info/pushtx" target=_blank>
+                             to here</a>
+          </span>
+          <div class="oneline right">
+            &nbsp; &nbsp; <span id="ntx_size"></span>
+          </div>
+        </div>
+      </div>
+      <!-- END NEW TX CONTROLLER -->
+
+    </td></tr></table>
+    <!-- END TX PANE -->
+
+  </div>
+  <!-- =====END WALLET WIDGET===== --> </div>
+
+
+  <!-- =====ADDRESS CACHE CONTROLLER===== -->
+  <div class="inlinewidget right">
+    <button id="ac_tog" esmcssroot="btnplain" esmtoggletarget="ac_pop">
+                      Frequently used addresses</button>
+    <br/>
+    <div id="ac_pop" esmcssRoot="popbox" esmfocusid="ac_addr">
+      <table style="width:100%;"><tr>
+        <td><span class='small'>Name:</span></td>
+        <td><input type="text" id="ac_name" class="addrnameinp"
+              title="Nickname to associate with address"/></td>
+      </tr><tr>
+        <td><span class='small'>Address:</span></td>
+        <td><input type="text" id="ac_addr" class="inpaddrfit"
+              title="Standard bitcoin address"/></td>
+      </tr><tr>
+        <td><span class='small'>Comment:</span></td>
+        <td><input type="text" id="ac_comment" class="inpfit"
+              title="A comment to associate with address"/></td>
+      </tr><tr>
+        <td><span class='small'>&nbsp;</span></td>
+        <td>
+          <span class='small'><input type="checkbox" id="ac_type" class="small"
+                 title="Make address available for use in wallets"/>
+                                   allow use in wallets</input></span>
+          &nbsp; &nbsp;
+          <div class="inlinewidget">
+            <button esmcssroot="btnsm" esmtoggletarget="acpk_pop">
+                         Public key</button>
+            <br/>
+            <div id="acpk_pop" esmcssRoot="popbox" esmfocusid="ac_pub">
+              <textarea id="ac_pub" class="pubkeyent"
+                    title="Public key text (130 chars hexcode)"></textarea><br/>
+              <button esmcssroot="btndosm" id="ac_pubok"
+                     title="Generate address from public key">Accept</button>
+            </div>
+          </div>
+        </td>
+      </tr></table>
+      <br/>
+      <button esmcssroot="btndo" id="ac_addrok"
+             title="Add entered address to list">Add</button>
+      &nbsp; &nbsp;<span id="ac_stat"></span>
+      <br/>
+      <div class="minspc">&nbsp;</div>
+      <br/>
+      <div id="ac_list" class="sellg"></div>
+      <div class="minspc">&nbsp;</div>
+      <div class="minspc">&nbsp;</div>
+      <span class="medsz">Import from: </span>
+      <button esmcssroot="btn" id="ac_loadfile"
+              title="Import address data from text file(s)">Files</button>
+      <input type="file" style="display:none;" 
+                                  multiple accept="text/*" id="ac_file" />
+      <div class="inlinewidget">
+        <button esmcssroot="btnclk" esmtoggletarget="act_pop"
+                title="Import addresses from entered or pasted text">
+                                               Text</button>
+        <br/>
+        <div id="act_pop" esmcssRoot="popclkleft" esmfocusid="ac_text">
+          <button esmcssroot="btndo" id="ac_loadtext"
+                  title="Add addresses from text to address list">Ok</button><br/>
+          <textarea id="ac_text" class="jsonaddrent"
+                  title="Address data in JSON text form"></textarea>
+        </div>
+      </div>
+      &nbsp; &nbsp; &nbsp;
+      <div class="right">
+        <div class="inlinewidget oneline">
+          <button esmcssroot="btnclk" esmtoggletarget="acx_pop"
+                  title="Export addresses to JSON text">
+                                         Export</button>
+          <br/>
+          <div id="acx_pop" esmcssRoot="popclkleft" esmfocusid="ac_export">
+            <button esmcssroot="btndo" id="ac_export"
+                    title="Create JSON text">To text</button>
+            &nbsp; <span class="small">Address list can be retained by 
+                                  pasting
+                                  to text editor and saving to file</span>
+            <br/>
+            <textarea id="ac_exportedlist" class="jsonaddrent"
+                      title="Address data in JSON text form"></textarea>
+          </div>
+        </div>
+        <button esmcssroot="btndosm" id="ac_clear"
+                title="Clear address list">Clear</button>
+      </div>
+    </div>
+  </div>
+  <!-- =====END ADDRESS CACHE CONTROLLER===== -->
+
+
+</div>
+<!-- =====================END TOP BAR===================== -->
+
+
+<table style="width:60%"><tr><td>
+
+<p>&nbsp;</p>
+
+<!-- RELEASE NOTES CONTROLLER -->
+<div id="rn_pop" esmcssRoot="popclk" esmfocusid="rn_foc">
+  <div class="notes medsz">
+
+<span><b>ThoughtWallet v0.0.1</b> early beta 2013.12.09</span>:
+Development and testing was performed using recent versions
+of the Firefox and Chrome desktop browsers (the latest release
+of Firefox is recommended because it includes a new fast
+javascript compiler).
+Bug reports and suggested fixes can be contributed
+by opening issues on the 
+<a href="https://github.com/ThoughtWallet">project's github pages</a>.
+<br/>
+<br/>
+
+<a id="rn_foc" href="bitcoinfaq.html#multisig" target=_blank>Multi-signature</a> 
+transaction outputs are recognized as
+spendable if the M keys required for redemption are in the wallet.
+A new multisig output can be created by selecting 'Outputs New' then 'Multisig'.
+To insure a transaction containing a 
+potentially spendable multisig output is available, it
+may be necessary to load the payer's transactions.
+<!--As a courtesy when sending new multisigs, a 
+1 satoshi standard output for each N endorser can be added to the
+transaction so it will be available to each potential claimant in the usual ways.
+-->
+<br/>
+<br/>
+
+Memo transaction outputs can be
+created by selecting 'Outputs New', then 'Memo'.
+As of this release, memo outputs are new and transactions
+containing them might not be accepted by the bitcoin network.
+<br/>
+<br/>
+
+ThoughtWallet can be run on a 
+<a href="bitcoinfaq.html#brain" target=_blank>Dark Box</a> 
+(secure offline or "air gapped" computer) to help insure
+private keys are not exposed to keyloggers or other malware
+(a thumb drive or SD card can be used to transfer 
+wallet data and signed transactions 
+[<a href="https://github.com/ThoughtWallet">ThoughtWallet zip</a>]).
+
+<br/>
+<br/>
+As with other 
+<a href="bitcoinfaq.html#brain" target=_blank>brain wallets</a>,
+<a href="bitcoinfaq.html#pass" target=_blank>passphrases</a> 
+can be used as substitutes for private keys.  
+ThoughtWallet does not write any data to a server or the local device, 
+so private keys will not automatically be saved.
+It is important that passphrases or private keys be memorized or written
+down and stored securely.
+
+<br/>
+<br/>
+To load or import data from local files when using Chrome,
+the browser needs to be run with its 
+<span class="tt">--allow-file-access-from-files</span>
+<a href="http://www.chromium.org/developers/how-tos/run-chromium-with-flags">
+command line option</a> 
+(the switch instructs Chrome to use 
+Firefox's behaviour regarding local files).
+
+<br/>
+<br/>
+Donations can be made to the ThoughtWallet project by sending coins to
+'Alice', 'Bob', or 'Mary'.
+  </div>
+</div>
+<!-- END RELEASE NOTES CONTROLLER -->
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<p class="medsz">
+ThoughtWallet is a bitcoin brain wallet that runs in the web browser 
+on the local device (written in client-side javascript).
+<br/><br/>
+<b>Important: this is an early beta released for testing.
+Only transactions containing small value outputs should be
+imported and spent using this version.
+New transactions should be carefully scrutinized before broadcasting
+them.</b>
+</p>
+
+<div id="rn_tog" esmcssroot="btntext medsz" esmtoggletarget="rn_pop">
+                      Release notes</div>
+
+
+</td></tr></table>
+
+
+<br/>
+
+<div class="medsz">
+DEMO
+<br/>
+  &nbsp; &nbsp; Keys:
+<br/>
+  &nbsp; &nbsp;  &nbsp; &nbsp; 
+    <span class="tt">wind glue oat golf ear mug seat wave wire</span>
+<br/>
+  &nbsp; &nbsp;  &nbsp; &nbsp; 
+    <span class="tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span>
+<br/>
+  &nbsp; &nbsp; Data: 
+<br/>
+  &nbsp; &nbsp;  &nbsp; &nbsp; 
+select 'Data', then 'Load from text'
+</div>
+<br/>
+
+<span class="small">
+  &copy; 2013 ThoughtWallet Project
+</span>
+
+
+<br/><br/>
+<p>&nbsp;</p>
+<br/><br/>
+<p>&nbsp;</p>
+<br/><br/>
+<p>&nbsp;</p>
+<br/><br/>
+<p>&nbsp;</p>
+
+
+</div></body>
 </html>
