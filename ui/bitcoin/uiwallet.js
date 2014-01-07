@@ -256,6 +256,7 @@ UIB.txv.ids = { //default ids
   load:'tv_load',
   loadfile:'tv_loadfile',
   loadtext:'tv_loadtext',
+  loadsrc:'tv_loadsrc',
   text:'tv_text',
   addr:'tv_addr',
   loadinfo:'tv_loadinfo',
@@ -288,7 +289,7 @@ UIB.txvController.prototype.tv_init = function( ids, coldefs ) {
   this.list_init( ids?ids:UIB.txv.ids, coldefs?coldefs:UIB.txv.coldefs );
   UIB.setupTest();
   if (this.ids.text && UIH.getel(this.ids.text) == "") {
-    var t = Bitcoin.ImpExp.BBE.sampleTx;
+    var t = Bitcoin.ImpExp.BCI.sampleTx;
     t = JSON.parse( t );
     UIH.setel( this.ids.text, JSON.stringify(t,null,2) );
   }
@@ -307,9 +308,10 @@ UIB.txvController.prototype.txv_onOtherDataChg = function( other, msg ) {
     if (other == this.controllers.addrs)
       this.setAddrs( other.arr );
     else
-      if (other == this.controllers.loadaddr && msg == 'ok')
-        this.loadAddr = other.getAddr(),
+      if (other == this.controllers.loadaddr && msg == 'ok') {
+        this.loadAddr = other.getAddr();
         this.loadFrom( 'URL', this.ids.list );
+      }
 }
 UIB.txvController.prototype.txv_verify = function( id ) {
   if (id == this.ids.info_chk)
@@ -391,12 +393,16 @@ UIB.txvController.prototype.txv_exportData = function() {
   }
 }
 UIB.txvController.prototype.getLoadURLs = function( ) {
-  if (this._loadAddr)
-    return [UIB.addrHRefLoad + this._loadAddr];
+  var loadFromURL = UIH.getel( this.ids.loadsrc );
+  if (!loadFromURL) loadFromURL = UIB.addrHRefLoad;
+  if (this.loadAddr) {
+    var url = loadFromURL + this.loadAddr;
+    return [url];
+  }
   var urls = [];
   if (this.addrs)
     for( var i=0; i<this.addrs.length; i++ )
-      urls[i] = UIB.addrHRefLoad + this.addrs[i];
+      urls[i] = loadFromURL + this.addrs[i];
   return urls;
 }
 UIB.txvController.prototype.txv_processLoadedData = function( 
@@ -420,13 +426,13 @@ UIB.txvController.prototype.txv_loadEnd = function() {
                          "(" + this.load.txsRejected + " rejected)" : ""))
                 : "" );
   this.load.tmpwallet = null;
-  this.loadAddr = this._loadAddr = null;
 }
 UIB.txvController.prototype.txv_loadStart = function( from, validate ) {
   UIH.clrel( this.ids.loadinfo );
   if (from == "URL" && !this.loadAddr)
     if (!this.addrs || !this.addrs.length)
       return UIH.errstat( this.ids.stat, "Wallet address(es) needed" );
+  this.loadAddr = null;
   if (!this.wallet) {
     this.wallet = new Bitcoin.Wallet();
     this.wallet.addAddrs( this.addrs?this.addrs:[] );
@@ -434,8 +440,6 @@ UIB.txvController.prototype.txv_loadStart = function( from, validate ) {
   this.load.txsRejected = 0, this.load.txsAccepted = 0;
   this.load.tmpwallet = new Bitcoin.Wallet();
   this.load.tmpwallet.addAddrs( this.addrs?this.addrs:[] );
-  this._loadAddr = this.loadAddr;
-  this.loadAddr = null;
   return true;
 }
 
@@ -453,6 +457,7 @@ UIB.wallet.ids = { //default ids
   loadfile:'w_loadfile',
   loadtext:'w_loadtext',
   loadinfo:'w_loadinfo',
+  loadsrc:'w_loadsrc',
   text:'w_text',
   file:'w_file',
   addr:'w_addr',
