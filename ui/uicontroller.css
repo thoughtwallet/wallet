@@ -23,7 +23,7 @@ body {
 .btnclk, .btnplain, .btntext, .btndo, .btndosm,
 .popbox, .popboxleft, .popclk, .popclkleft, .popclktop {
   display:inline-block; margin:0; border:1px; border-style:solid;
-  color:gray; border-color:gray; background-color:#f3f0b0;
+  color:gray; border-color:gray; background-color:#f0ebc0;
   border-radius:1px;
 }
 .btnbig, .btnsm, .btn, .btnn, .btnmain, 
@@ -56,14 +56,19 @@ body {
 .popboxleft_suggested, .popbox_suggested {
   visibility:visible; opacity:0.75;
 }
+.popboxleft_suggested, .popbox_suggested {
+  visibility:visible; opacity:0.75;
+}
 .popboxleft_hover, .popbox_hover, 
 .btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
-.btndo_hover, .btndosm_hover, .btnn:hover, .btnmain:hover {
-  background-color:#ffffc0; border-color:#b0b0ff; /*color:#8080ff;*/
+.btndo_hover, .btndosm_hover, .btnn:hover, .btnmain:hover,
+.btn_suggested, .btnbig_suggested, .btnsm_suggested {
+  background-color:#fcfbc8; border-color:#c0c0f0; /*color:#8080ff;*/
 }
 .btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
 .btndo_hover, .btndosm_hover, .btntext_hover, .btntext_toggled,
-.btnn:hover, .btnmain:hover {
+.btnn:hover, .btnmain:hover,
+.btn_suggested, .btnbig_suggested, .btnsm_suggested {
   color:#8080ff;
 }
 .btnplain_hover {
@@ -76,8 +81,8 @@ body {
 .popclk_toggled, .popclkleft_toggled, .popclktop_toggled,
 .btn_toggled, .btnclk_toggled, .btnbig_toggled, .btnsm_toggled,
 .btnmain_toggled, .btnplain_toggled { 
-  background-color:#ffffc0;
-  border-style:solid; border-color:#b0b0ff; color:#8080ff;
+  background-color:#fffec8;
+  border-style:solid; border-color:#c0c0f0; color:#8080e0;
 }
 .popbox_toggled, .popboxleft_toggled,
 .popclk_toggled, .popclkleft_toggled, .popclktop_toggled { 
