@@ -318,6 +318,12 @@
                      Or load transactions for frequently used address:</span>
                   <br/>
                   <div id="aol_list" class="selfit"></div>
+                  <br/>
+                  <span class="medsz">Location to load data from:</span>
+                  <br/>
+                  <input type="text" id="w_loadsrc" class="inpfit"
+                         value="http://blockchain.info/unspent?address="
+                         title="Base URL to load data from"/>
                 </div>
               </div>
               <!-- END LOAD ADDRESS CONTROLLER -->
@@ -342,17 +348,16 @@
 
             <br/>
             <span class="valid" id="w_loadinfo"></span>
-              <span id="w_stat">&nbsp;</span>
-              <span>&nbsp;</span>
+              <span id="w_stat"></span>
 
             <div class="small">
               <br/>
-              Files/text in JSON format, can be loaded from 
+              Files/text in JSON format, can be loaded from
+              <br/><a href="http://blockchain.info/unspent?address="
+                target=_blank>http://blockchain.info/unspent?address=</a>ADDRESS
               <br/>
-              http://blockexplorer.com/q/mytransactions/ADDRESS 
-              (<a href=
-"http://blockexplorer.com/q/mytransactions/"
-              target=_blank>link</a>)
+              or <a href="http://blockexplorer.com/q/mytransactions/"
+                target=_blank>http://blockexplorer.com/q/mytransactions/</a>ADDRESS
             </div>
 
             <br/>
@@ -792,7 +797,7 @@
 <div id="rn_pop" esmcssRoot="popclk" esmfocusid="rn_foc">
   <div class="notes medsz">
 
-<span><b>ThoughtWallet v0.0.1</b> early beta 2013.12.09</span>:
+<span><b>ThoughtWallet v0.0.1</b> early beta 2014.01.06</span>:
 Development and testing was performed using recent versions
 of the Firefox and Chrome desktop browsers (the latest release
 of Firefox is recommended because it includes a new fast
@@ -809,7 +814,8 @@ spendable if the M keys required for redemption are in the wallet.
 A new multisig output can be created by selecting 'Outputs New' then 'Multisig'.
 To insure a transaction containing a 
 potentially spendable multisig output is available, it
-may be necessary to load the payer's transactions.
+may be necessary to load the payer's transactions 
+(in complete form from blockexplorer.com).
 <!--As a courtesy when sending new multisigs, a 
 1 satoshi standard output for each N endorser can be added to the
 transaction so it will be available to each potential claimant in the usual ways.
@@ -855,8 +861,8 @@ Firefox's behaviour regarding local files).
 
 <br/>
 <br/>
-Donations can be made to the ThoughtWallet project by sending coins to
-'Alice', 'Bob', or 'Mary'.
+Donations can be made to the open source ThoughtWallet project 
+by sending coins to 'Alice', 'Bob', or 'Mary'.
   </div>
 </div>
 <!-- END RELEASE NOTES CONTROLLER -->
