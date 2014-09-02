@@ -8,7 +8,9 @@
   <meta charset="utf-8">
   <title>ThoughtWallet - 
          Bitcoin Brainwallet with Multi-Signature and Memo Output Support</title>
-  <meta content="bitcoin client-side javascript wallet with multi-signature and memo output support" name="description">
+  <meta content="bitcoin client-side javascript wallet with multi-signature and memo output 
+
+support" name="description">
   <meta content="ThoughtWallet" name="author">
   <link rel="stylesheet" type="text/css" href="ui/uicontroller.css">
   <link rel="stylesheet" type="text/css" href="ui/bitcoin/ui.css">
@@ -899,6 +901,11 @@ imported and spent using this version,
 and new transactions should be verified before broadcasting
 them.
 <br/><br/>
+BUG: the 'Load data for all transactions in wallet' function will 
+stop and say 'No Data' when the wallet contains addresses that have never
+been used.  These addresses can be temporarily removed from the wallet, or
+data for each individual address can be loaded.
+<br/><br/>
 Tips/donations can be made to the ThoughtWallet open-source
 project by sending coins to 'Alice', 'Bob', or 'Mary'
 (also multisig, any combinations of M and N).
@@ -917,7 +924,9 @@ project by sending coins to 'Alice', 'Bob', or 'Mary'
 DEMO
 <div class="indent">
 Keys:
-<br/><span class="indent tt">wind glue oat golf ear mug seat wave wire</span><br/><span class="indent tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span><br/>
+<br/><span class="indent tt">wind glue oat golf ear mug seat wave wire</span><br/><span 
+
+class="indent tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span><br/>
 Data: 
 <br/>
 <span class="indent">select 'Data', then 'Load from text'</span>
