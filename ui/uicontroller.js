@@ -273,7 +273,7 @@ UIH.URLLoader.prototype.loadData = function( obj, i ) {
     var i1 = t.indexOf( "<p>" );
     var i2 = t.indexOf( "</p>" );
     if (i1 < 0 || i2 < 0)
-      return obj.onLoaded( i, null, "Invalid response" );
+      return obj.onLoaded( i, null, "No data" );
     i1 += 3;
     var t = t.substr( i1, i2-i1 );
     obj.onLoaded( i, t );
