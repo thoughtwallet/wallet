@@ -23,12 +23,12 @@ body {
 .btnclk, .btnplain, .btntext, .btndo, .btndosm,
 .popbox, .popboxleft, .popclk, .popclkleft, .popclktop {
   display:inline-block; margin:0; border:1px; border-style:solid;
-  color:gray; border-color:gray; background-color:#f0ebc0;
+  color:gray; border-color:#c8c8c8; background-color:#f0ebc0;
   border-radius:1px;
 }
 .btnbig, .btnsm, .btn, .btnn, .btnmain, 
 .btnclk, .btnplain, .btntext, .btndo, .btndosm {
-  border-color:#b8b8b8; cursor:pointer; white-space:nowrap;
+  border-color:#c8c8c8; cursor:pointer; white-space:nowrap;
   background-color:#f0f0f0; color:#707070;
 }
 .btnplain, .btntext {
@@ -63,14 +63,14 @@ body {
 .btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
 .btndo_hover, .btndosm_hover, .btnn:hover, .btnmain:hover,
 .btn_suggested, .btnbig_suggested, .btnsm_suggested {
-  background-color:#fcfbc8; border-color:#c0c0f0; /*color:#8080ff;*/
+  background-color:#fcf8c8; /*border-color:#c0c0c0; color:#8080ff;*/
 }
-.btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
+/*.btnclk_hover, .btn_hover, .btnbig_hover, .btnsm_hover, .btnplain_hover, 
 .btndo_hover, .btndosm_hover, .btntext_hover, .btntext_toggled,
 .btnn:hover, .btnmain:hover,
 .btn_suggested, .btnbig_suggested, .btnsm_suggested {
   color:#8080ff;
-}
+}*/
 .btnplain_hover {
   background-color:transparent;
 }
@@ -81,8 +81,8 @@ body {
 .popclk_toggled, .popclkleft_toggled, .popclktop_toggled,
 .btn_toggled, .btnclk_toggled, .btnbig_toggled, .btnsm_toggled,
 .btnmain_toggled, .btnplain_toggled { 
-  background-color:#fffec8;
-  border-style:solid; border-color:#c0c0f0; color:#8080e0;
+  background-color:#fff8c8;
+  border-style:solid; /*border-color:#c0c0f0; color:#8080e0;*/
 }
 .popbox_toggled, .popboxleft_toggled,
 .popclk_toggled, .popclkleft_toggled, .popclktop_toggled { 
@@ -96,7 +96,7 @@ body {
 }
 .popbox_childfocused, .popboxleft_childfocused, 
 .popclk_childfocused, .popclkleft_childfocused, .popclktop_childfocused { 
-  background-color:#e8e8e8;
+  background-color:#e8e8e8; color:#505050; box-shadow:0px 0px 0px #888888;
 }
 .back {
   position:absolute; top:0; left:0; width:100%;
@@ -104,7 +104,7 @@ body {
   background-color:white;
 }
 .back_childfocused {
-  background-color:#c8c8c8; color:#b0b0b0;
+  background-color:#ccc; color:#aaa;
 }
 .graybox {
   display:inline-block; margin:0; border:0; padding:0.2em 0.4em;
@@ -125,7 +125,7 @@ table, td, div {
   border-spacing:0;
 }
 .panesep {
-  padding:0; border-right:1px dotted gray; 
+  padding:0; border-right:1px dotted #aaa; 
   background-color:transparent; min-width:2em; 
 }
 .oneline {
@@ -184,4 +184,7 @@ td .btm, .tdbtm {
 }
 td .right, .tdright {
   text-align:right;
+}
+.indent {
+  margin-left:2em;
 }
