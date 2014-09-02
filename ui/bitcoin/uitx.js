@@ -465,14 +465,14 @@ UIB.memoController.prototype.verify = function( id ) {
                           "Memo/data needed" );
     else
       if (UIH.getelchk( this.ids.hexchk )) {
-        if (!UIB.testHex( UIH.getel(this.ids.memo), 160 ))
+        if (!UIB.testHex( UIH.getel(this.ids.memo), 80 ))
           return UIH.errstat( this.ids.stat, 
-                              "hex/160 max needed" );
+                              "hex/80 length max" );
       }
       else
-        if (UIH.getel(this.ids.memo).length > 80)
+        if (UIH.getel(this.ids.memo).length > 40)
           return UIH.errstat( this.ids.stat, 
-                              "80 max needed" );
+                              "40 length max" );
     UIH.clrel( this.ids.stat );
     this.broadcastChg( 'ok' );
     return true;
