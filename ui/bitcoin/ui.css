@@ -1,6 +1,6 @@
 .sel, .selsm, .sellg, .selfit, .sellgfit, .selsmfit, 
 .history, .histfit, .outs, .notes {
-  padding:0; border:1px dotted gray; background-color:transparent;
+  padding:0; border:1px solid #c8c8c8; background-color:transparent;
   width:22em; height:14em; font-size:90%;
   overflow-y:auto; overflow-x:hidden;
 }
@@ -116,14 +116,16 @@
 }
 .privkey, .privkeyfit {
   font-size:95%; font-family:"courier new","lucida console",monospace;
-  background-color:#fff0f0; width:37em;
+  width:37em;
 }
 .passent {
-  background-color:#fffbfb; color:black; width:37em; height:3em;
+  color:black; width:37em; height:3em;
+}
+.passent:focus {
+  background-color:#fffbfb;
 }
 .pubkey, .pubkeyfit, .pubkeyent {
-  width:25em; height:5.2em; font-size:85%;
-  background-color:#f0f0ff; color:blue;
+  width:25em; height:5.2em; font-size:85%; color:#45e;
 }
 .memoent {
   width:20em; height:5.2em; font-size:85%;
@@ -133,7 +135,7 @@
   width:100%;
 }
 .pubinfo, .addrinfo {
-  color:blue;
+  color:#45e;
 }
 .pubkey, .pubkeyfit {
   border:0; background-color:transparent;
@@ -171,7 +173,10 @@
 }
 .inpaddr, .inpaddrfit {
   font-size:90%; font-family:"courier new","lucida console",monospace;
-  width:22em; background-color:#f0f0ff; color:blue;
+  width:22em; color:#23e;
+}
+.inpaddr:focus, .inpaddrfit:focus, .jsonent:focus, .pubkeyent:focus {
+  background-color:#f0f4ff;
 }
 .inpfit, .inpaddrfit {
   width:100%;
@@ -192,11 +197,14 @@
 .inpint {
   width:3em; background-color:transparent;
 }
+.inpint:focus, .inpfloat:focus {
+  background-color:#fff4f4;
+}
 .qrcode {
   width:148px; border:1px dotted #c8c8c8; background-color:white;
 }
 .fee {
-  color:#000000;
+  color:#444;
 }
 .bitaddr, .bitaddrfit {
   font-size:95%; display:inline-block; overflow-x:hidden;
@@ -206,14 +214,14 @@
   width:100%;
 }
 .addrshow {
-  color:#8080ff;
+  color:#45e;
 }
 .addrnameshow, .addrnameinp {
   color:#a09040;
   text-decoration:italic;
 }
-.addrnameinp {
-  background-color:#ffffe0;
+.addrnameinp:focus {
+  background-color:#fff9e8;
 }
 .bitaddr a, .bitaddresssmall a {
   /*color:#00ff00;*/
@@ -221,4 +229,13 @@
 /*.graybox {
   width:22em; font-size:90%;
 }*/
+a {
+  color:#45e;
+  text-decoration:none;
+  /*border-bottom:1px solid transparent;*/
+}
+a:hover {
+  text-decoration:underline;
+  /*border-color:#ccc;*/
+}
 
