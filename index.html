@@ -13,8 +13,8 @@
   <link rel="stylesheet" type="text/css" href="ui/uicontroller.css">
   <link rel="stylesheet" type="text/css" href="ui/bitcoin/ui.css">
   <script src="lib/ui/transev/transev.js"></script>
-  <script src="lib/ui/elemstate/elemstate.js"></script>
-  <script src="lib/ui/elemstate/statetools.js"></script>
+  <script src="lib/ui/elemstate/js/elemstate.js"></script>
+  <script src="lib/ui/elemstate/js/statetools.js"></script>
   <script src="lib/bitcoin/bitcoinjs/build/bitcoinjs-min.js"></script>
   <script src="lib/bitcoin/mbitcoinjs/src/mbitcoinjs.js"></script>
   <script src="lib/bitcoin/mbitcoinjs/src/impexp.js"></script>
@@ -797,20 +797,18 @@
 <div id="rn_pop" esmcssRoot="popclk" esmfocusid="rn_foc">
   <div class="notes medsz">
 
-<span><b>ThoughtWallet v0.0.1</b> early beta 2014.01.06</span>:
+<span><b>ThoughtWallet v0.0.2</b> beta 2014.09.01</span>:
 Development and testing was performed using recent versions
-of the Firefox and Chrome desktop browsers (the latest release
-of Firefox is recommended because it includes a new fast
-javascript compiler).
+of the Firefox and Chrome desktop browsers.
 Bug reports and suggested fixes can be contributed
 by opening issues on the 
 <a href="https://github.com/ThoughtWallet">project's github pages</a>.
 <br/>
 <br/>
 
-<a id="rn_foc" href="bitcoinfaq.html#multisig" target=_blank>Multi-signature</a> 
-transaction outputs are recognized as
-spendable if the M keys required for redemption are in the wallet.
+A <a id="rn_foc" href="bitcoinfaq.html#multisig" target=_blank>multi-signature</a> 
+transaction output is recognized as
+spendable if M addresses are in the wallet.
 A new multisig output can be created by selecting 'Outputs New' then 'Multisig'.
 To insure a transaction containing a 
 potentially spendable multisig output is available, it
@@ -830,16 +828,6 @@ containing them might not be accepted by the bitcoin network.
 <br/>
 <br/>
 
-ThoughtWallet can be run on a 
-<a href="bitcoinfaq.html#brain" target=_blank>Dark Box</a> 
-(secure offline or "air gapped" computer) to help insure
-private keys are not exposed to keyloggers or other malware
-(a thumb drive or SD card can be used to transfer 
-wallet data and signed transactions 
-[<a href="https://github.com/ThoughtWallet">ThoughtWallet zip</a>]).
-
-<br/>
-<br/>
 As with other 
 <a href="bitcoinfaq.html#brain" target=_blank>brain wallets</a>,
 <a href="bitcoinfaq.html#pass" target=_blank>passphrases</a> 
@@ -848,6 +836,37 @@ ThoughtWallet does not write any data to a server or the local device,
 so private keys will not automatically be saved.
 It is important that passphrases or private keys be memorized or written
 down and stored securely.
+<br/>
+<br/>
+
+ThoughtWallet can be run on a 
+<a href="bitcoinfaq.html#brain" target=_blank>quarantined</a> 
+(secure offline or "air gapped") computer to help insure
+keylogger or other malware does not capture and transfer private keys.
+<br/>
+<br/>
+<div class="indent">
+SETUP: <a href="https://github.com/ThoughtWallet">Download ThoughtWallet zip</a> 
+to a thumb drive or SD card and unzip to a directory on the quarantined device.
+</div>
+<br/>
+<div class="indent">
+SYNC: Using the online wallet, enter wallet addresses (not keys) and 
+select Data|SyncFromNet, then use
+Data|Export to save the wallet data to a text file on the 
+thumb drive/SD card.  On the quarantined device, use Data|SyncFromFile to 
+import the wallet data.
+</div>
+<br/>
+<div class="indent">
+PUSH: On the quarantined device, 
+enter the keys for the addresses, then build and sign new transactions.
+The raw versions of the transactions can be moved back to the
+online device and broadcast to the bitcoin network using any of the
+transaction push services available, such as 
+<a href="http://www.blockchain.info/pushtx" target=_blank>
+blockchain.info/pushtx</a>.
+</div>
 
 <br/>
 <br/>
@@ -858,11 +877,6 @@ the browser needs to be run with its
 command line option</a> 
 (the switch instructs Chrome to use 
 Firefox's behaviour regarding local files).
-
-<br/>
-<br/>
-Donations can be made to the open source ThoughtWallet project 
-by sending coins to 'Alice', 'Bob', or 'Mary'.
   </div>
 </div>
 <!-- END RELEASE NOTES CONTROLLER -->
@@ -872,18 +886,22 @@ by sending coins to 'Alice', 'Bob', or 'Mary'.
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
 
 
 <p class="medsz">
 ThoughtWallet is a bitcoin brain wallet that runs in the web browser 
-on the local device (written in client-side javascript).
+on the local device (written in client-side javascript).  Firefox 
+recommended for best results.
 <br/><br/>
-<b>Important: this is an early beta released for testing.
+This is a beta release.
 Only transactions containing small value outputs should be
-imported and spent using this version.
-New transactions should be carefully scrutinized before broadcasting
-them.</b>
+imported and spent using this version,
+and new transactions should be verified before broadcasting
+them.
+<br/><br/>
+Tips/donations can be made to the ThoughtWallet open-source
+project by sending coins to 'Alice', 'Bob', or 'Mary'
+(also multisig, any combinations of M and N).
 </p>
 
 <div id="rn_tog" esmcssroot="btntext medsz" esmtoggletarget="rn_pop">
@@ -897,24 +915,18 @@ them.</b>
 
 <div class="medsz">
 DEMO
+<div class="indent">
+Keys:
+<br/><span class="indent tt">wind glue oat golf ear mug seat wave wire</span><br/><span class="indent tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span><br/>
+Data: 
 <br/>
-  &nbsp; &nbsp; Keys:
-<br/>
-  &nbsp; &nbsp;  &nbsp; &nbsp; 
-    <span class="tt">wind glue oat golf ear mug seat wave wire</span>
-<br/>
-  &nbsp; &nbsp;  &nbsp; &nbsp; 
-    <span class="tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span>
-<br/>
-  &nbsp; &nbsp; Data: 
-<br/>
-  &nbsp; &nbsp;  &nbsp; &nbsp; 
-select 'Data', then 'Load from text'
+<span class="indent">select 'Data', then 'Load from text'</span>
+</div>
 </div>
 <br/>
 
 <span class="small">
-  &copy; 2013 ThoughtWallet Project
+  &copy; 2014 ThoughtWallet Project
 </span>
 
 
