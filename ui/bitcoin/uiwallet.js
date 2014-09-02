@@ -743,5 +743,3 @@ UIB.selOutController.prototype.so_loadEnd = function( addrs ) {
   return this.txv_loadEnd();
 }
 
-
-
