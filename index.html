@@ -7,10 +7,8 @@
 <head>
   <meta charset="utf-8">
   <title>ThoughtWallet - 
-         Bitcoin Brainwallet with Multi-Signature and Memo Output Support</title>
-  <meta content="bitcoin client-side javascript wallet with multi-signature and memo output 
-
-support" name="description">
+         HTML5 Bitcoin Wallet with Multi-Signature and Memo Output Support</title>
+  <meta content="bitcoin client-side javascript wallet with multi-signature and memo output support" name="description">
   <meta content="ThoughtWallet" name="author">
   <link rel="stylesheet" type="text/css" href="ui/uicontroller.css">
   <link rel="stylesheet" type="text/css" href="ui/bitcoin/ui.css">
@@ -153,7 +151,7 @@ support" name="description">
                                      Keys</button>
                 <br/>
                 <div id="gen_pop" esmcssRoot="popbox" esmfocusid="gen_pass">
-                  <div id="gen_addr" class="bitaddrfit">
+                  <div id="gen_addr" class="bitaddrfull">
                             &nbsp;</div>
                   <br/>
                   <span class="medsz">Passphrase or private key:</span>
@@ -256,8 +254,12 @@ support" name="description">
               <table class="mintable" style="width:100%;"><tr><td>
                 <span class="small">Bitcoin address (standard):</span>
                 <br/>
-                <div id="wali_addr" class="bitaddr">&nbsp;</div>
+                <div id="wali_addr" class="bitaddrfull">&nbsp;</div>
                 <br/>
+                <!-- <span class="small">Bitcoin address (testnet version):</span>
+                <br/>
+                <div id="wali_addrtestnet" class="bitaddrfull">&nbsp;</div>
+                <br/> -->
                 <span class="small">Bitcoin address (hash 160):</span>
                 <br/>
                 <span class="medsz addrinfo" id="wali_hash160">&nbsp;</span>
@@ -320,12 +322,14 @@ support" name="description">
                      Or load transactions for frequently used address:</span>
                   <br/>
                   <div id="aol_list" class="selfit"></div>
+                  <!-- v2
                   <br/>
                   <span class="medsz">Location to load data from:</span>
                   <br/>
                   <input type="text" id="w_loadsrc" class="inpfit"
                          value="http://blockexplorer.com/q/mytransactions/"
-                         title="Base URL to load data from"/>
+                         title="Base URL to load data from"/>  
+                  -->
                 </div>
               </div>
               <!-- END LOAD ADDRESS CONTROLLER -->
@@ -358,8 +362,8 @@ support" name="description">
               <br/><a href="http://blockchain.info/unspent?address="
                 target=_blank>http://blockchain.info/unspent?address=</a>ADDRESS
               <br/>
-              or <a href="http://blockexplorer.com/q/mytransactions/"
-                target=_blank>http://blockexplorer.com/q/mytransactions/</a>ADDRESS
+              or <a href="http://btc.blockr.io/api/v1/tx/raw/"
+                target=_blank>http://btc.blockr.io/api/v1/tx/raw/</a>TX
             </div>
 
             <br/>
@@ -372,9 +376,11 @@ support" name="description">
               <div id="wx_pop" esmcssRoot="popclk" esmfocusid="w_export">
                 <button esmcssroot="btndo" id="w_export">
                                        To text</button>
-                &nbsp; <span class="small">Transactions can be retained by 
+                <!-- &nbsp; <span class="small">Transactions can be retained by 
                               copying/pasting
-                              to text editor and saving to file</span>
+                              to text editor and saving to file</span> -->
+                &nbsp; <a id="w_exportsave" class="small" href="" download="walletdata.txt" style="display:none;">
+                Save transaction data to file</a>
                 <br/>
                 <textarea id="w_exporteddata" class="jsonent"></textarea>
               </div>
@@ -677,11 +683,15 @@ support" name="description">
           </div>
           &nbsp; &nbsp; &nbsp;
           <span class="small">
-            Raw transaction 
-            can be broadcast by copying/pasting 
+            To broadcast, copy/paste 
               <a href="http://www.blockchain.info/pushtx" target=_blank>
-                             to here</a>
+                             to here</a> (or
+              <a href="http://tbtc.blockr.io/tx/push" target=_blank>to here</a> if testnet)
           </span>
+          &nbsp;
+          <a id="ntx_hexsave" class="small" href="" download="signedtx.txt" style="display:none;">
+          Save to file</a>
+          &nbsp;
           <div class="oneline right">
             &nbsp; &nbsp; <span id="ntx_size"></span>
           </div>
@@ -771,9 +781,11 @@ support" name="description">
           <div id="acx_pop" esmcssRoot="popclkleft" esmfocusid="ac_export">
             <button esmcssroot="btndo" id="ac_export"
                     title="Create JSON text">To text</button>
-            &nbsp; <span class="small">Address list can be retained by 
+            <!-- &nbsp; <span class="small">Address list can be retained by 
                                   pasting
-                                  to text editor and saving to file</span>
+                                  to text editor and saving to file</span> -->
+            &nbsp; <a id="ac_exportsave" class="small" href="" download="addresses.txt" style="display:none;">
+            Save address list to file</a>
             <br/>
             <textarea id="ac_exportedlist" class="jsonaddrent"
                       title="Address data in JSON text form"></textarea>
@@ -794,44 +806,65 @@ support" name="description">
 <table style="width:60%"><tr><td>
 
 <p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 
+<div class="medsz">
+<input class="small" type="checkbox" checked id="_testnet" onclick="UIH.refreshAllControllers()">
+Use Testnet</input>
+(faucets: 
+<a href="http://faucet.xeno-genesis.com/" target=_blank>http://faucet.xeno-genesis.com/</a>,
+<a href="http://bitcoinfaucet.uo1.net/" target=_blank>http://bitcoinfaucet.uo1.net/</a>)
+</div><br/>
+
+<!-- v2
+<div id="rn_tog" esmcssroot="btntext medsz" esmtoggletarget="rn_pop">
+                      Release notes</div>
+-->
+<br/>
+<div class="medsz">
+<div onclick="UIH.getelobj('rn_pop').style.display='block';this.style.display='none';"
+id="rn_tog" style="cursor:pointer;">
+Release notes</div>
+</div>
 <!-- RELEASE NOTES CONTROLLER -->
-<div id="rn_pop" esmcssRoot="popclk" esmfocusid="rn_foc">
-  <div class="notes medsz">
+<!-- v2
+<div id="rn_pop" esmcssRoot="popclk" esmfocusid="rn_foc"> 
+-->
+<div id="rn_pop" style="display:none;font-size:90%;"> 
+  <div>
 
-<span><b>ThoughtWallet v0.0.2</b> beta 2014.09.01</span>:
-Development and testing was performed using recent versions
-of the Firefox and Chrome desktop browsers.
-Bug reports and suggested fixes can be contributed
-by opening issues on the 
-<a href="https://github.com/ThoughtWallet">project's github pages</a>.
+<div style="cursor:pointer;"
+onclick="UIH.getelobj('rn_tog').style.display='block';UIH.getelobj('rn_pop').style.display='none';">
+[close release notes]</div>
+<br/>
+<span><b>ThoughtWallet v0.0.3</b> 2015.08.01</span>
 <br/>
 <br/>
-
+ThoughtWallet is an HTML5 bitcoin wallet - it runs in the web browser on the local device.
+The TOR (Firefox) browser is recommended.
+(<a href="https://github.com/ThoughtWallet">ThoughtWallet project on github</a>).
+<br/>
+<br/>
+Tips/donations can be made by sending coins to 'Alice', 'Bob', or 'Mary'
+(also multisig, any combinations of M and N).
+<br/>
+<br/>
 A <a id="rn_foc" href="bitcoinfaq.html#multisig" target=_blank>multi-signature</a> 
 transaction output is recognized as
 spendable if M addresses are in the wallet.
 A new multisig output can be created by selecting 'Outputs New' then 'Multisig'.
-To insure a transaction containing a 
-potentially spendable multisig output is available, it
-may be necessary to load the payer's transactions 
-(in complete form from blockexplorer.com).
 <!--As a courtesy when sending new multisigs, a 
 1 satoshi standard output for each N endorser can be added to the
 transaction so it will be available to each potential claimant in the usual ways.
 -->
 <br/>
 <br/>
-
 Memo transaction outputs can be
 created by selecting 'Outputs New', then 'Memo'.
-As of this release, memo outputs are new and transactions
-containing them might not be accepted by the bitcoin network.
 <br/>
 <br/>
-
-As with other 
-<a href="bitcoinfaq.html#brain" target=_blank>brain wallets</a>,
+Brainwallet
 <a href="bitcoinfaq.html#pass" target=_blank>passphrases</a> 
 can be used as substitutes for private keys.  
 ThoughtWallet does not write any data to a server or the local device, 
@@ -840,31 +873,34 @@ It is important that passphrases or private keys be memorized or written
 down and stored securely.
 <br/>
 <br/>
-
-ThoughtWallet can be run on a 
-<a href="bitcoinfaq.html#brain" target=_blank>quarantined</a> 
-(secure offline or "air gapped") computer to help insure
-keylogger or other malware does not capture and transfer private keys.
+Using ThoughtWallet on a 
+<a href="bitcoinfaq.html#darkbox" target=_blank>quarantined</a> 
+(secure offline or "air gapped") computer:
 <br/>
 <br/>
 <div class="indent">
-SETUP: <a href="https://github.com/ThoughtWallet">Download ThoughtWallet zip</a> 
-to a thumb drive or SD card and unzip to a directory on the quarantined device.
+SETUP. Save this app (save web page, complete)
+to a thumb drive or SD card.
 </div>
 <br/>
 <div class="indent">
-SYNC: Using the online wallet, enter wallet addresses (not keys) and 
+SYNC. Enter wallet addresses (not keys) and 
 select Data|SyncFromNet, then use
 Data|Export to save the wallet data to a text file on the 
-thumb drive/SD card.  On the quarantined device, use Data|SyncFromFile to 
-import the wallet data.
+thumb drive/SD card.
 </div>
 <br/>
 <div class="indent">
-PUSH: On the quarantined device, 
-enter the keys for the addresses, then build and sign new transactions.
-The raw versions of the transactions can be moved back to the
-online device and broadcast to the bitcoin network using any of the
+SIGN. Move the thumb drive/SD card to a quarantined device
+and open the saved version of this app in the browser there.
+Use Data|SyncFromFile to import the saved wallet data file.
+Enter the private keys for the addresses, then build and sign new transactions.
+Save the raw (hexcode) versions of the transactions back to the thumb drive/SD card.
+</div>
+<br/>
+<div class="indent">
+PUSH. Move the thumb drive/SD card back to the online device
+and broadcast the raw signed transactions to the bitcoin network using any of the
 transaction push services available, such as 
 <a href="http://www.blockchain.info/pushtx" target=_blank>
 blockchain.info/pushtx</a>.
@@ -872,6 +908,7 @@ blockchain.info/pushtx</a>.
 
 <br/>
 <br/>
+
 To load or import data from local files when using Chrome,
 the browser needs to be run with its 
 <span class="tt">--allow-file-access-from-files</span>
@@ -879,70 +916,39 @@ the browser needs to be run with its
 command line option</a> 
 (the switch instructs Chrome to use 
 Firefox's behaviour regarding local files).
-  </div>
-</div>
-<!-- END RELEASE NOTES CONTROLLER -->
 
-
-
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
-
-<p class="medsz">
-ThoughtWallet is a bitcoin brain wallet that runs in the web browser 
-on the local device (written in client-side javascript).  Firefox 
-recommended for best results.
-<br/><br/>
-This is a beta release.
-Only transactions containing small value outputs should be
-imported and spent using this version,
-and new transactions should be verified before broadcasting
-them.
-<!-- 
-<br/><br/>
-BUG: when syncing from BCI (default is BBE), 
-the 'Load data for all transactions in wallet' function may 
-stop and say 'No Data' when the wallet contains addresses that have no value.
-These addresses can be temporarily removed from the wallet, or
-data for individual addresses can be loaded.  -->
-<br/><br/>
-Tips/donations can be made to the ThoughtWallet open-source
-project by sending coins to 'Alice', 'Bob', or 'Mary'
-(also multisig, any combinations of M and N).
-</p>
-
-<div id="rn_tog" esmcssroot="btntext medsz" esmtoggletarget="rn_pop">
-                      Release notes</div>
-
-
-</td></tr></table>
-
-
+<br/>
 <br/>
 
 <div class="medsz">
 DEMO
 <div class="indent">
 Keys:
-<br/><span class="indent tt">wind glue oat golf ear mug seat wave wire</span><br/><span 
-
-class="indent tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span><br/>
+<br/><span class="indent tt">wind glue oat golf ear mug seat wave wire</span><br/><span class="indent tt">5J396V1kf8Z7ffWKQZpJYzWSNzKFhcuK5PLKP9ZdNLunzPL8NYS</span><br/>
 Data: 
 <br/>
 <span class="indent">select 'Data', then 'Load from text'</span>
 </div>
 </div>
+
+  </div>
+</div>
+<!-- END RELEASE NOTES CONTROLLER -->
+
+
+
+
+</td></tr></table>
+
+
+<br/>
 <br/>
 
 <span class="small">
-  &copy; 2014 ThoughtWallet Project
+  <i>2013-2015 ThoughtWallet Project, public domain</i>
 </span>
 
 
-<br/><br/>
-<p>&nbsp;</p>
 <br/><br/>
 <p>&nbsp;</p>
 <br/><br/>
