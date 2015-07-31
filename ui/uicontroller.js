@@ -447,7 +447,7 @@ UIH.Controller.prototype.postRefresh = function( ) {
   if (!this.ids.main)
     return this.refresh();
   if (!this.refreshPending)
-    setTimeout( "UIH.controller._refresh('" + this.ids.main + "');", 10 );
+    setTimeout( "UIH.controller._refresh('" + this.ids.main + "');", 1 );
   this.refreshPending = true;
 }
 
@@ -496,6 +496,11 @@ UIH.Controller.prototype.refreshAll = function( ) {
       UIH.controllers[i].postRefresh();
 }
 
+UIH.refreshAllControllers = function() {
+  for( var i=0; i<UIH.controllers.length; i++ )
+    UIH.controllers[i].postRefresh();
+}
+
 UIH.Controller.prototype.controller_dataChanged = function( 
                              newdata, nonotify, act, nopost ) {
   if (nopost)
@@ -528,7 +533,7 @@ UIH.Controller.prototype.intakeLoadedData = function() {
 
 UIH.Controller.prototype.onLoadProgress = function( i, percent ) {
   var m = UIH.getel( this.ids.stat );
-  return UIH.errstat( this.ids.stat, m+" ("+percent+"%)" );
+  return UIH.setstat( this.ids.stat, m+"." );
 }
 
 UIH.Controller.prototype.onLoaded = function( i, data, errmsg ) {
@@ -562,7 +567,8 @@ UIH.Controller.prototype._loadnext = function( i ) {
   var fc = "UIH.controller__loadnext('" + this.load.id + "'," + i + ");";
   var msg = "&nbsp;";
   if (this.load.from != 'text')
-    var msg = "Loading " + this.load.from + " " + (i+1) + "...";
+    //var msg = "Loading " + this.load.from + " " + (i+1) + "...";
+    var msg = "Loading..";
   if (i)
     UIH.continueProcess( this.ids.stat, msg, fc );
   else
