@@ -1,12 +1,12 @@
-bitcoin javascript brain wallet with multisig and memo output support
+Bitcoin wallet with multisig and memo output support implemented as an HTML5 app.
 
-running here: http://thoughtwallet.github.io/wallet
+Go to app: http://thoughtwallet.github.io/wallet
 
-ThoughtWallet runs clientside in the browser - nothing needs to be installed and there are no server components.
+Runs clientside in the browser.  Nothing needs to be installed and there are no server components.
 
-See release notes on start screen for details.
+See release notes in app for details.
 
-The code is in the gh-pages branch.  Most source files are MIT licenced (all are free to use and modify).
+Code is in the gh-pages branch.
 
-version 0.0.2 posted 2014.09.01
+Version 0.0.3 posted 2015.08.01
 
