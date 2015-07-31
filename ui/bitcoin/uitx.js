@@ -102,13 +102,13 @@ UIB.stoController.prototype.sto_getColVal = function(
       return Bitcoin.Util.formatValue( sendTo.value );
   if (coldef.name == 'payto')
     if (sendTo.Address)
-      return UIB.fmtAddrSmall( sendTo.Address, "", 18 );
+      return UIB.fmtAddrSmall( sendTo.Address, "", 20 );
     else
       if (sendTo.Multisig)
         return UIB.fmtMultisigTitle( sendTo.Multisig );
       else
         if (sendTo.Data)
-          return UIB.fmtMemo( sendTo.Data, 28 );
+          return UIB.fmtMemo( sendTo.Data, 30 );
   return "&nbsp;";
 }
 UIB.stoController.prototype.getColAlt = function( i, col, coldef, st ) {
