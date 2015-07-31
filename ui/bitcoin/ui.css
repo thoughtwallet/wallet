@@ -4,6 +4,9 @@
   width:22em; height:14em; font-size:90%;
   overflow-y:auto; overflow-x:hidden;
 }
+.history {
+  width:25em;
+}
 .sel, .selfit {
   width:24em; height:8em;
 }
@@ -14,7 +17,7 @@
   width:25em; height:12em;
 }
 .outs {
-  width:22em; height:8em;
+  width:24em; height:8em;
 }
 .selfit, .selsmfit, .sellgfit, .histfit {
   width:100%;
@@ -210,7 +213,7 @@
   font-size:95%; display:inline-block; white-space:nowrap;
 }
 .bitaddr, .bitaddrfit {
-  overflow-x:hidden; width:20em;
+  overflow-x:hidden; width:22em;
 }
 .bitaddrfit {
   width:100%;
