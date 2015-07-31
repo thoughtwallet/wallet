@@ -534,6 +534,7 @@ UIB.newtx.ids = { //default ids
   stat:'ntx_stat',
   size:'ntx_size',
   hex:'ntx_hex',
+  hexsave:'ntx_hexsave',
   'JSON':'ntx_json',
   JSONshow:'ntx_jsontog',
   send:'ntx_send',
@@ -556,7 +557,11 @@ UIB.newtx.createController = function( ids, controllers ) {
   return c;
 }
 UIB.newTxController.prototype.setup = function( ) {
-  var en = UIH.getel( this.ids.hex ) != "";
+  var text = UIH.getel( this.ids.hex );
+  var en = text != "";
+  UIH.getelobj(this.ids.hexsave).style.display = en ? "inline-block" : "none";
+  UIH.getelobj(this.ids.hexsave).href = 
+                        'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
   UIH.enel( this.ids.cancel, en );
   UIH.enel( this.ids.confirmshow, en );
   UIH.enel( this.ids.JSONshow, en );
@@ -716,9 +721,9 @@ UIB.newTxController.prototype.verify = function( id ) {
     return this.createTx();
   if (id == this.ids.send)
     //if (UIH.getel(this.ids.hex))
-      return alert( "Direct send disabled in this Beta version; " +
+      return alert( "Direct send disabled in this Beta version - " +
                     "generated raw transaction can be copied/pasted " +
-                    "to http://www.blockchain.info/pushtx" );
+                    "to push transaction service" );
     //else
     //  return this.createTx();
   if (id == this.ids.cancel)
