@@ -3,6 +3,7 @@
 */
 var UIB = {};
 UIB.addrHRef = 'https://blockchain.info/address/';
+UIB.addrHRefTestnet = 'https://tbtc.blockr.io/address/info/';
 UIB.addrClass = null;//'bitaddr';//'UIB_addr';
 UIB.addrShowClass = 'addrshow';
 UIB.addrNameClass = 'addrnameshow';
@@ -14,9 +15,37 @@ UIB.setAddrTags = function( addr, t ) {
   addr.setMetaData( {tags:t?t:{}} );
 }
 
+/*Bitcoin.Address._toString = Bitcoin.Address.toString;
+Bitcoin.Address.toString = function() {
+  if (this.hash.version == 0x6F)
+    return;
+  return new Bitcoin.Address( hash );
+}*/
+
+UIB.addrToStr = function( addr ) {
+  return UIH.getelchk('_testnet') ? 
+               Bitcoin.ImpExp.Sync.fmtAddr(addr,true) : addr.toString();
+}
+UIB.addrFromStr = function( string ) {
+  var bytes = Bitcoin.Base58.decode(string);
+  var hash = bytes.slice(0, 21);
+  var checksum = Crypto.SHA256(Crypto.SHA256(hash, {asBytes: true}), {asBytes: true});
+  if (checksum[0] != bytes[21] ||
+      checksum[1] != bytes[22] ||
+      checksum[2] != bytes[23] ||
+      checksum[3] != bytes[24]) 
+    return;
+  var version = hash.shift();
+  if (version != 0 && version != 0x6F)
+    return;
+  return new Bitcoin.Address( hash );
+}
+
 UIB.createAddr = function( addrOrAddrStr, t ) {
   if (!t && addrOrAddrStr instanceof Bitcoin.Address)
     t = UIH.copyData( UIB.getAddrMetaData(addrOrAddrStr).tags );
+  else
+    addrOrAddrStr = UIB.addrFromStr( addrOrAddrStr );
   return Bitcoin.Address.create( addrOrAddrStr, {tags:t?t:{}} );
 }
 
@@ -155,6 +184,8 @@ UIB.fmtAddr = function( addr, cls, tag, maxlen, nolink, keyhint ) {
   if (addr instanceof Bitcoin.Address)
     haskey = UIB.getAddrMetaData(addr).keyinfo ? true : false;
   addr = addr.toString();
+  if (UIH.getelchk( '_testnet' ))
+    addr = Bitcoin.ImpExp.Sync.fmtAddr( addr, true );
   if (maxlen && name.length > 10)
     name = name.substr(0,10) + "... ";
   else
@@ -162,8 +193,13 @@ UIB.fmtAddr = function( addr, cls, tag, maxlen, nolink, keyhint ) {
       name = name.substr(0,20) + "... ";
     else
       name += " ";
-  maxlen = maxlen ? maxlen : (addr+name).length;
   var href = UIB.addrHRef + addr;
+  if (UIH.getelchk( '_testnet' ))
+    href = UIB.addrHRefTestnet + addr;
+  else
+    if (addr[0] != '1')
+      showlink = false;
+  maxlen = maxlen ? maxlen : (addr+name).length+1000;
   if (name.length >= maxlen)
     name = name.substr(0,maxlen)+"...", addr = "";
   else
@@ -178,8 +214,7 @@ UIB.fmtAddr = function( addr, cls, tag, maxlen, nolink, keyhint ) {
   if (showlink && addr)
     addr = "<a href='" + href + "' target=_blank>" + addr + "</a>";
   else
-    addr = "<span class='" + UIB.addrShowClass + 
-                          "'>" + addr + "</span>";
+    addr = "<span class='" + UIB.addrShowClass + "'>" + addr + "</span>";
   if (haskey && keyhint)
     addr = "<span class='haskey' title='has key'>*</span>" + addr;
   return UIH.fmt( name+addr, cls, tag );
@@ -199,7 +234,7 @@ UIB.prevShowAddr = "";
 UIB.setAddr = function( id, addr, QRid, cls, tag, maxlen ) {
   addr = addr ? addr : "";
   if (UIH.getelobj(id) instanceof HTMLInputElement)
-    return UIH.setel( id, addr.toString() );
+    return UIH.setel( id, UIB.addrToStr(addr) );
   UIH.setel( id, UIB.fmtAddr(addr,cls?cls:UIB.addrClass,tag,maxlen) );
   if (QRid && UIH.getelobj(QRid) && UIB.prevShowAddr != addr.toString())
     if (addr)
@@ -222,7 +257,9 @@ UIB.showAddrInfo2 = function( ids, addr, showpriv ) {
   addr = addr ? addr : keyinfo.a;
   if (!keyinfo.h160hex)
     keyinfo.h160hex = addr ? Crypto.util.bytesToHex(addr.hash) : "";
-  UIB.setAddr( ids.info_addr, addr, ids.info_qr );
+  UIB.setAddr( ids.info_addr, addr, ids.info_qr, null, null, -1 );
+  //UIB.setAddr( ids.info_addrtestnet, addr?Bitcoin.ImpExp.Sync.fmtAddr(addr,true):"", 
+    //           null, null, null, -1 );
   UIH.setel( ids.info_pub, keyinfo.pub ? keyinfo.pub : tags.pubkey );
   UIH.setel( ids.info_hash160, keyinfo.h160hex );
   if (showpriv && keyinfo.priv) {
@@ -386,6 +423,8 @@ UIB.genController.prototype.mine = function( ) {
       return UIH.errstat( statid, "Invalid chars in substring" );
     return true;
   }
+  if (UIH.getelchk( '_testnet' ))
+    return UIH.errstat( this.ids.stat, "Testnet address mining not supported" );
   if (!UIH.getel( this.ids.minematch ))
     return UIH.errstat( this.ids.stat, "Substring needed" );
   if (!testsub( this.ids.minematch, this.ids.stat ) || 
@@ -445,6 +484,7 @@ UIB.selAddrList.ids = { //default ids
   list:'sal_list',
   stat:'sal_stat',
   info_addr:'ali_addr',
+  info_addrtestnet:'ali_addrtestnet',
   info_pub:'ali_pub',
   info_hash160:'ali_hash160',
   info_pass:'ali_pass',
@@ -558,6 +598,7 @@ UIB.addrList.ids = { //default ids
 
   info_details:'ali_details',
   info_addr:'ali_addr',
+  info_addrtestnet:'ali_addrtestnet',
   info_pub:'ali_pub',
   info_hash160:'ali_hash160',
   info_pass:'ali_pass',
@@ -698,6 +739,7 @@ UIB.addrCache.ids = { //default ids
 
   clear:'ac_clear',
   export:'ac_export',
+  exportsave:'ac_exportsave',
   exporteddata:'ac_exportedlist',
   loadfile:'ac_loadfile',
   loadtext:'ac_loadtext',
@@ -756,6 +798,9 @@ UIB.addrCacheController.prototype.onSel = function( i ) {
 UIB.addrCacheController.prototype.exportData = function() {
   var text = JSON.stringify( UIB.exportAddrs(this.arr), null, 2 );
   UIH.setel( this.ids.exporteddata, text );
+  UIH.getelobj(this.ids.exportsave).style.display = "inline-block",
+  UIH.getelobj(this.ids.exportsave).href = 
+                        'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
 }
 UIB.addrCacheController.prototype.processLoadedData = function( 
                                               data, i, validate ) {
