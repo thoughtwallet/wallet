@@ -24,11 +24,22 @@ UIB.fmtTxHash = function( h, hs, cls, tag, timestamp ) {
 }
 
 UIB.fmtTxTime = function( timestamp ) {
-  var tf = "";
-  if (timestamp)
-    timestamp = timestamp.split( ":" ),
-    tf = timestamp[0] + ":" + timestamp[1];
-  return tf;
+  var t = "";
+  if (!timestamp)
+    return t;
+  function tc(t2) {return String(t2).length==1 ? ('0'+t2) : t2;}
+  t = new Date( timestamp );
+  if (!t || !t.getUTCFullYear()) {
+    if (timestamp.split(':').length > 1)
+      return timestamp;
+    return '';
+  }
+  t = t.getUTCFullYear() + '-' + 
+      tc(t.getUTCMonth()+1) + '-' +
+      tc(t.getUTCDate()) + ' ' +
+      tc(t.getUTCHours()) + ':' +
+      tc(t.getUTCMinutes());
+  return t;
 }
 
 UIB.fmtTxHash2 = function( txhash, maxlen, timestamp, cls ) {
@@ -250,20 +261,28 @@ UIB.showOutputInfo = function( ids, os ) {
   UIH.setel( ids.info_unconfirmed, os.unconfirmed?"unconfirmed":"" );
 }
 
-UIB.URLLoader = function( wallet, urls ) {
-  this.wallet = wallet;
-  this.urls = urls;
-}
-UIB.URLLoader.prototype.getName = function( i ) {
-  return "";
-}
+UIB.URLLoader = function( wallet, urls ) {this.wallet = wallet;this.urls = urls;}
+UIB.URLLoader.prototype.getName = function( i ) {return "";}
 UIB.URLLoader.prototype.loadData = function( obj, i ) {
   var callbacks = {
     onprogress: function( wallet, n ) {obj.onLoadProgress( obj, i );},
     onerror: function( msg ) {obj.onLoaded( i, null, msg );},
     oncomplete: function( wallet, txsin ) {obj.onLoaded( i, "[done]" );}
   }
-  Bitcoin.ImpExp.Sync.loadAddrs( this.wallet, callbacks, this.urls, UIH.getelchk('_testnet') );
+  var unccallbacks = {
+    onprogress: function() {callbacks.onprogress();},
+    onerror: function( msg ) {callbacks.onerror(msg);},
+    oncomplete: function( x, unc ) {
+      if (!unc)
+        Bitcoin.ImpExp.Sync.loadAddrs( w, callbacks, urls, _testnet );
+      else
+        callbacks.onerror( "Unconfirmed transactions waiting" );
+    }
+  }
+  var _testnet = UIH.getelchk('_testnet');
+  var urls = this.urls;
+  var w = this.wallet;
+  Bitcoin.ImpExp.Sync.testUnconfirmed( unccallbacks, urls, _testnet );
 }
 
 
@@ -348,7 +367,7 @@ UIB.txvController.prototype.txv_getColVal = function( row, col, coldef, o ) {
   if (coldef.name == 'val')
     return Bitcoin.Util.formatValue( o.value );
   if (coldef.name == 'txhash')
-    return UIB.fmtTxHash2( o.txHash, 23, o.tx.timestamp, UIB.txClassSmall );
+    return UIB.fmtTxHash2( o.txHash, 28, o.tx.timestamp, UIB.txClassSmall );
   return "";
 }
 UIB.txvController.prototype.txv_getColAlt = function( i, col, coldef, o ) {
@@ -650,6 +669,7 @@ UIB.walletAddrs = {};
 UIB.walletAddrs.ids = { //default ids
   list:'wal_list',
   details:'wal_details',
+  syncmsg:'wal_syncmsg',
   clkverify:['wali_showpriv','wal_details'],
   stat:'wal_stat',
 
@@ -682,11 +702,15 @@ UIB.walletAddrsController.prototype.onOtherDataChg = function( other, act ) {
     if (other == this.controllers.addr && act == 'ok') {
       var a = other.getAddr();
       if (a)
-        this.addAddr( a );
+        this.addAddr( a ), UIH.getelobj(this.ids.syncmsg).style.display = "inline-block";
     }
     else
       if (other == this.controllers.gen && act == 'ok')
-        this.addKey( other.getKey() );
+        this.addKey( other.getKey() ), 
+        UIH.getelobj(this.ids.syncmsg).style.display = "inline-block";
+      else
+        if (other == this.controllers.wallet && act == 'load')
+          UIH.getelobj(this.ids.syncmsg).style.display = "none";
 }
 
 
