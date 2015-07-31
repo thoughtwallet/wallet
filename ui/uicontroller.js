@@ -527,7 +527,7 @@ UIH.Controller.prototype.intakeLoadedData = function() {
       return UIH.errstat( this.ids.stat, "Invalid data" );
   if (this.loadEnd)
     this.loadEnd();
-  this.dataChanged();
+  this.dataChanged( 0, 0, 'load' );
   UIH.endProcess( this.ids.stat, "&nbsp;" );
 }
 
