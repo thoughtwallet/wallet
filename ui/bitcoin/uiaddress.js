@@ -927,3 +927,4 @@ UIB.pubKeyController.prototype.setup = function( pubkey ) {
   UIB.setAddr( this.ids.addr, UIB.getPubKeyAddr(pubkey) );
   UIB.setel( this.ids.pub, pubkey );*/
 }
+
