@@ -4,6 +4,7 @@
 UIB.__TEST__ = false;
 UIB.MAXN = 3;
 UIB.txHRef = 'https://blockchain.info/tx/';
+UIB.txHRefTestnet = 'https://tbtc.blockr.io/tx/info/';
 UIB.addrHRefLoad = 'http://blockexplorer.com/q/mytransactions/';
 UIB.txClass = 'bitaddrsmall';//'UIB_txhash';
 UIB.txClassSmall = 'bitaddrsmall';//'UIB_txhash';
@@ -12,6 +13,8 @@ UIB.fmtTxHash = function( h, hs, cls, tag, timestamp ) {
   if (!h)
     return "";
   var href = UIB.txHRef + h;
+  if (UIH.getelchk( '_testnet' ))
+    href = UIB.txHRefTestnet + h;
   if (!hs) hs = h;
   var timestr = timestamp ? UIB.fmtTxTime(timestamp)+" " : "";
   var a = timestr + "<a href='" + href + "' " + 
@@ -174,7 +177,7 @@ UIB.fmtOutputAddr = function( a ) {
     a = Bitcoin.Address.fromPubKey( a );
   a = UIB.lookupAddr( a );
   var t = UIB.getAddrTags( a );
-  var n = a.toString();
+  var n = UIB.addrToStr( a );
   if (t.name)
     n = t.name + " (" + n.substr(0,10) + "...)";
     //n = t.name.length>13 ? t.name.substr(0,10)+"..." : t.name;
@@ -247,6 +250,22 @@ UIB.showOutputInfo = function( ids, os ) {
   UIH.setel( ids.info_unconfirmed, os.unconfirmed?"unconfirmed":"" );
 }
 
+UIB.URLLoader = function( wallet, urls ) {
+  this.wallet = wallet;
+  this.urls = urls;
+}
+UIB.URLLoader.prototype.getName = function( i ) {
+  return "";
+}
+UIB.URLLoader.prototype.loadData = function( obj, i ) {
+  var callbacks = {
+    onprogress: function( wallet, n ) {obj.onLoadProgress( obj, i );},
+    onerror: function( msg ) {obj.onLoaded( i, null, msg );},
+    oncomplete: function( wallet, txsin ) {obj.onLoaded( i, "[done]" );}
+  }
+  Bitcoin.ImpExp.Sync.loadAddrs( this.wallet, callbacks, this.urls, UIH.getelchk('_testnet') );
+}
+
 
 //----tx output viewer controller----
 
@@ -265,6 +284,7 @@ UIB.txv.ids = { //default ids
   clear:'tv_clear',
   export:'tv_export',
   exporteddata:'tv_exporteddata',
+  exportsave:'tv_exportsave',
   unconfirmed:'tv_unconfirmed'
 }
 UIB.txv.coldefs = [ 
@@ -346,6 +366,8 @@ UIB.txvController.prototype.refresh = function() {
   if (!this.wallet)
     return;
   UIH.clrel( this.ids.exporteddata );
+  UIH.getelobj(this.ids.exportsave).href = "";
+  UIH.getelobj(this.ids.exportsave).style.display = "none";
   var s;
   if (this.selectOutputs)
     s = this.selectOutputs();
@@ -385,49 +407,59 @@ UIB.txvController.prototype.txv_clearData = function() {
 UIB.txvController.prototype.txv_exportData = function() {
   if (this.wallet) {
     var t = Bitcoin.ImpExp.BBE.export( this.wallet );
-    if (t.txsRejected)
+    if (t.txsRejected || !t.text) {
       UIH.clrel( this.ids.exporteddata ), 
-      UIH.errstat( this.ids.stat, "Failed exporting data" );
-    else
-      UIH.setel( this.ids.exporteddata, t.text );
+      UIH.getelobj(this.ids.exportsave).href = "",
+      UIH.getelobj(this.ids.exportsave).style.display = "none";
+      if (t.txsRejected)
+        UIH.errstat( this.ids.stat, "Failed exporting data" );
+    }
+    else 
+      UIH.setel( this.ids.exporteddata, t.text ),
+      UIH.getelobj(this.ids.exportsave).style.display = "inline-block",
+      UIH.getelobj(this.ids.exportsave).href = 
+                        'data:text/plain;charset=utf-8,' + encodeURIComponent(t.text);
   }
 }
-UIB.txvController.prototype.getLoadURLs = function( ) {
-  var loadFromURL = UIH.getel( this.ids.loadsrc );
-  if (!loadFromURL) loadFromURL = UIB.addrHRefLoad;
-  if (this.loadAddr) {
-    var url = loadFromURL + this.loadAddr;
-    return [url];
-  }
+UIB.txvController.prototype.getLoadURLs = function() {
+  //var loadFromURL = UIH.getel( this.ids.loadsrc );
+  //if (!loadFromURL) loadFromURL = UIB.addrHRefLoad;
   var urls = [];
-  if (this.addrs)
-    for( var i=0; i<this.addrs.length; i++ )
-      urls[i] = loadFromURL + this.addrs[i];
-  return urls;
+  if (this.loadAddr)
+    urls = [this.loadAddr];
+  else
+    if (this.addrs)
+      for( var i=0; i<this.addrs.length; i++ )
+        urls[i] = this.addrs[i];
+  return [urls];
 }
-UIB.txvController.prototype.txv_processLoadedData = function( 
-                                              data, i, validate ) {
+UIB.txvController.prototype.txv_processLoadedData = function( data, i ) {
+  if (data == "[done]") {
+    this.load.txsAccepted = this.wallet.txCount - this.load.txCount;
+    return {};
+  }
   var c = this;
   function onProgress( i ) {
-    UIH.setstat( c.ids.stat, (validate?"Validating":"Importing") +
-                             " transactions (" + (i+1) + ")" );
+    UIH.setstat( c.ids.stat, "Importing transactions (" + (i+1) + ")" );
   }
-  var w = validate ? this.load.tmpwallet : this.wallet;
+  //var w = validate ? this.load.tmpwallet : this.wallet;
+  var w = this.wallet;
   var ret = UIB.importData( w, data, onProgress );
-  if (ret.result && !validate)
+  if (ret.result)// && !validate)
     this.load.txsAccepted += ret.result.txsAccepted,
     this.load.txsRejected += ret.result.txsRejected;
   return ret;
 }
 UIB.txvController.prototype.txv_loadEnd = function() {
-  UIH.setel( this.ids.loadinfo, this.load.txsAccepted ? 
-                (this.load.txsAccepted+" transactions accepted "
+  var n = this.wallet.txCount - this.load.txCount;
+  UIH.setel( this.ids.loadinfo, (n||this.load.txsRejected) ? 
+                (n+" transaction" + (n>1?"s":"") + " added "
                    + (this.load.txsRejected ? 
                          "(" + this.load.txsRejected + " rejected)" : ""))
-                : "" );
-  this.load.tmpwallet = null;
+                : "No transactions added" );
+  //this.load.tmpwallet = null;
 }
-UIB.txvController.prototype.txv_loadStart = function( from, validate ) {
+UIB.txvController.prototype.txv_loadStart = function( from ) {
   UIH.clrel( this.ids.loadinfo );
   if (from == "URL" && !this.loadAddr)
     if (!this.addrs || !this.addrs.length)
@@ -438,8 +470,11 @@ UIB.txvController.prototype.txv_loadStart = function( from, validate ) {
     this.wallet.addAddrs( this.addrs?this.addrs:[] );
   }
   this.load.txsRejected = 0, this.load.txsAccepted = 0;
-  this.load.tmpwallet = new Bitcoin.Wallet();
-  this.load.tmpwallet.addAddrs( this.addrs?this.addrs:[] );
+  this.load.txCount = this.wallet.txCount;
+  //this.load.tmpwallet = new Bitcoin.Wallet();
+  //this.load.tmpwallet.addAddrs( this.addrs?this.addrs:[] );
+  if (from == "URL")
+    this.load.loader = new UIB.URLLoader( this.wallet, this.load.sources[0] );
   return true;
 }
 
@@ -452,6 +487,7 @@ UIB.wallet.ids = { //default ids
   stat:'w_stat',
   clear:'w_clear',
   export:'w_export',
+  exportsave:'w_exportsave',
   exporteddata:'w_exporteddata',
   load:'w_load',
   loadfile:'w_loadfile',
@@ -619,6 +655,7 @@ UIB.walletAddrs.ids = { //default ids
 
   info_details:'wali_details',
   info_addr:'wali_addr',
+  info_addrtestnet:'wali_addrtestnet',
   info_pub:'wali_pub',
   info_hash160:'wali_hash160',
   info_pass:'wali_pass',
@@ -742,4 +779,6 @@ UIB.selOutController.prototype.so_loadEnd = function( addrs ) {
   this.lockedOn = -1;
   return this.txv_loadEnd();
 }
+
+
 
