@@ -206,9 +206,11 @@
 .fee {
   color:#444;
 }
+.bitaddr, .bitaddrfit, .bitaddrfull {
+  font-size:95%; display:inline-block; white-space:nowrap;
+}
 .bitaddr, .bitaddrfit {
-  font-size:95%; display:inline-block; overflow-x:hidden;
-  white-space:nowrap; width:20em;
+  overflow-x:hidden; width:20em;
 }
 .bitaddrfit {
   width:100%;
