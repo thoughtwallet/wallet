@@ -70,6 +70,7 @@
       wc.onLoadClk = function(id) 
                         {if(id==this.ids.clear||id==this.ids.load)towd();}
       wc.controllers = {addrs:walc,loadaddr:loac};
+      walc.controllers.wallet = wc;
 
       // init pay to controller
       ptc = UIB.payTo.createController();
@@ -243,6 +244,8 @@
             <!-- END KEY/ADDRESS OPTION LINE -->
 
             <div class="inlinewidget small right">
+              <span class="stat" id="wal_syncmsg" style="display:none;">Resync recommended</span>
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               <input class="small" type="checkbox" id="wal_details"
                      title="Show key/address details on hover">details</input>
             </div>
@@ -838,12 +841,12 @@ Release notes</div>
 onclick="UIH.getelobj('rn_tog').style.display='block';UIH.getelobj('rn_pop').style.display='none';">
 [close release notes]</div>
 <br/>
-<span><b>ThoughtWallet v0.0.3</b> 2015.08.01</span>
+<span><b>ThoughtWallet v0.0.3</b> 2015.08.01</span> &nbsp;
+[<a href="https://github.com/ThoughtWallet">project on github</a>]
 <br/>
 <br/>
 ThoughtWallet is an HTML5 bitcoin wallet - it runs in the web browser on the local device.
 The TOR (Firefox) browser is recommended.
-(<a href="https://github.com/ThoughtWallet">ThoughtWallet project on github</a>).
 <br/>
 <br/>
 Tips/donations can be made by sending coins to 'Alice', 'Bob', or 'Mary'
