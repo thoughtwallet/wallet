@@ -664,11 +664,22 @@
               <div id="ntx_confirmpop" esmcssRoot="popclk" esmfocusid="ntx_confirm">
                 <span class="medsz oneline">Was transaction sent/confirmed?</span>
                 <br/>
+                <span class="medsz oneline">(if online resync to confirm)</span>
+                <br/>
                 <button esmcssroot="btndo" id="ntx_confirm">Yes</button>
               </div>
             </div>
-            <button esmcssroot="btndosm" id="ntx_cancel"
-                    title="Undo generated transaction if unconfirmed">Cancel</button>
+            <div class="inlinewidget">
+              <button esmcssroot="btnsm" esmtoggletarget="ntx_cancelpop"
+                      title="Delete generated transaction if not sent" id="ntx_canceltog">
+                                        Delete</button>
+              <br/>
+              <div id="ntx_cancelpop" esmcssRoot="popclk" esmfocusid="ntx_cancel">
+                <span class="medsz oneline">Delete UNSENT transaction?</span>
+                <br/>
+                <button esmcssroot="btndo" id="ntx_cancel">Yes, delete it</button>
+              </div>
+            </div>
           </div>
           <br/>
           <span class="small">New transaction (raw):</span>
