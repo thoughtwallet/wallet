@@ -104,7 +104,7 @@
       // init create tx controller
       txc = UIB.newtx.createController();
       txc.controllers = {wallet:wc,newouts:stoc,chgto:ctc,keys:walc};
-      txc.onVerifyOk = function(id) {if(id==this.ids.confirm)tontx();}
+      txc.onVerifyOk = function(id) {if(id==this.ids.confirm || id==this.ids.cancel)tontx();}
 
       // init addr cache
       acc.loadDefaults();
