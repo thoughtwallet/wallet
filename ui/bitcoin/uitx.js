@@ -538,6 +538,7 @@ UIB.newtx.ids = { //default ids
   'JSON':'ntx_json',
   JSONshow:'ntx_jsontog',
   send:'ntx_send',
+  cancelshow:'ntx_canceltog',
   cancel:'ntx_cancel',
   confirm:'ntx_confirm',
   confirmshow:'ntx_confirmtog',
@@ -562,8 +563,8 @@ UIB.newTxController.prototype.setup = function( ) {
   UIH.getelobj(this.ids.hexsave).style.display = en ? "inline-block" : "none";
   UIH.getelobj(this.ids.hexsave).href = 
                         'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-  UIH.enel( this.ids.cancel, en );
   UIH.enel( this.ids.confirmshow, en );
+  UIH.enel( this.ids.cancelshow, en );
   UIH.enel( this.ids.JSONshow, en );
   UIH.enel( this.ids.send, en );
   UIH.clrel( this.ids.stat );
