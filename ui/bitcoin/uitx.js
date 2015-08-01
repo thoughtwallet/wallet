@@ -615,7 +615,7 @@ UIB.newTxController.prototype._createAsync = function( ) {
     else {
       This.signInProgress = false;
       UIH.controller.lock( false );
-      UIH.enel( This.ids.cancel, false );
+      UIH.enel( This.ids.cancelshow, false );
       if (This.cancelled)
         UIH.errstat( This.ids.stat, "Cancelled" );
       else
@@ -647,7 +647,7 @@ UIB.newTxController.prototype._createAsync = function( ) {
   UIH.controller.lock( true, [this.ids.cancel] );
   this.signInProgress = true;
   this.cancelled = false;
-  UIH.enel( this.ids.cancel, true );
+  UIH.enel( this.ids.cancelshow, true );
   wallet.createSend2( s.sendTos, s.chgTo, s.fee, eckeys,
                       this.controllers.wallet.xOuts, callback );
 }
@@ -664,10 +664,10 @@ UIB.newTxController.prototype._create = function( ) {
   for( var i=0,eckeys=[]; i<this.keys.length; i++ )
     eckeys.push( this.keys[i].key );
   var sendtx;
-  UIH.enel( this.ids.cancel, true );
+  UIH.enel( this.ids.cancelshow, true );
   sendtx = wallet.createSend2( s.sendTos, s.chgTo, s.fee, 
                                eckeys, this.controllers.wallet.xOuts );
-  UIH.enel( this.ids.cancel, false );
+  UIH.enel( this.ids.cancelshow, false );
   if (!sendtx)
     return UIH.errstat( this.ids.stat, "Failed creating transaction" );
   //  add new tx back to wallet to eliminate spent outs
@@ -705,6 +705,7 @@ UIB.newTxController.prototype.confirm = function( ) {
   this.txouts = null;
   this.txhash = null;
   UIH.enel( this.ids.confirmshow, false );
+  UIH.enel( this.ids.cancelshow, false );
 }
 
 UIB.newTxController.prototype.cancel = function( ) {
